@@ -1,2 +1,8 @@
 Collection of useful stuff for
-install Linux on a Pin64 RockPro64
+install Linux on
+
+- Pine64 RockPro64
+- MacBook Pro
+- Raspberry Pi
+- Raspberry Pi 3
+- Raspberry Pi 4
