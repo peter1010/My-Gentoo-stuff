@@ -1,0 +1,29 @@
+app-admin/sudo -sendmail
+app-editors/vim python -crypt -lua
+app-text/xmlto text
+#>=dev-lang/python-3.10.6_p4 tk
+dev-lang/python tk
+dev-lang/rust rustfmt
+dev-libs/boost context icu
+dev-vcs/git -perl
+gui-apps/waybar network
+gui-wm/sway -swaybar
+media-gfx/imagemagick jpeg
+media-libs/libsdl2 gles2
+media-libs/libvpx postproc
+media-libs/sdl2-image jpeg png
+media-libs/sdl2-mixer vorbis
+media-video/motion ffmpeg mmal
+net-dns/avahi python -introspection
+net-dns/unbound -http2 dnscrypt
+net-libs/nodejs inspector
+net-misc/chrony -nts -pts
+sys-apps/busybox -pam
+sys-apps/smartmontools -daemon -update-drivedb
+sys-auth/seatd server -elogind
+sys-boot/grub truetype
+sys-libs/zlib minizip
+www-client/chromium -X -hangouts
+www-client/firefox -X
+x11-libs/libva opengl
+
