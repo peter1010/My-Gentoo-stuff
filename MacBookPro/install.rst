@@ -60,12 +60,18 @@ Build the kernel::
     $emerge --ask sys-kernel/gentoo-sources
 
 Source will end up in /usr/src/linux-xxx-yyy-zzz
-so make a symbolic link to a generic folder linux::
 
-    $cd /usr/src/linux
+Make a symbolic link to a generic folder linux::
+
+    $eselect kernel list
+    $eselect kernel set ?
 
 Copy across config::
 
+    $modprobe configs
+    $zcat /proc/config.gz > /usr/src/linux/.config
+
+    $cd /usr/src/linux
     $make oldconfig
     $make
     $make modules_install
