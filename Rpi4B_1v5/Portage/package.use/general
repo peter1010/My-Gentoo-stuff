@@ -1,0 +1,6 @@
+app-admin/sudo -sendmail
+app-editors/vim -python -crypt -lua
+dev-vcs/git -perl
+net-misc/chrony -nts -pts
+media-video/motion ffmpeg mmal
+sys-devel/gcc -fortran
