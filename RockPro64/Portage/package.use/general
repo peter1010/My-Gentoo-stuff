@@ -1,0 +1,32 @@
+app-admin/sudo -sendmail
+app-editors/vim -python -crypt -lua
+app-text/xmlto text
+dev-cpp/cairomm X
+dev-cpp/gtkmm X
+dev-lang/python
+dev-lang/tcl threads
+dev-libs/boost context icu
+dev-vcs/git -perl
+gui-libs/waybar X
+gui-wm/sway -swaybar
+media-libs/freetype harfbuzz
+media-libs/libglvnd X
+media-libs/libsdl2 gles2 X
+media-libs/libvpx postproc
+media-libs/sdl2-image jpeg png
+media-libs/sdl2-mixer vorbis
+media-video/motion ffmpeg mmal
+net-dns/avahi python -introspection
+net-dns/unbound -http2 dnscrypt
+net-misc/chrony -nts -pts
+sys-apps/busybox -pam
+sys-apps/dbus -systemd
+sys-apps/smartmontools -daemon -update-drivedb
+sys-auth/seatd -elogind server
+sys-boot/grub truetype
+www-client/firefox -X dbus
+www-servers/lighttpd -lua rrdtool
+www-servers/uwsgi python
+x11-libs/cairo X
+x11-libs/libva opengl
+x11-libs/libxkbcommon X
