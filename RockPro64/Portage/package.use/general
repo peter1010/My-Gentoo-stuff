@@ -1,5 +1,5 @@
 app-admin/sudo -sendmail
-app-editors/vim -python -crypt -lua
+app-editors/vim python -crypt -lua
 app-text/xmlto text
 dev-cpp/cairomm X
 dev-cpp/gtkmm X
