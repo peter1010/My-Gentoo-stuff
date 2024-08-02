@@ -1,7 +1,7 @@
 app-admin/sudo -sendmail
-app-editors/vim -python -crypt -lua -X
+app-editors/vim python -crypt -lua -X
 dev-vcs/git -perl
-
 media-video/motion ffmpeg mmal
+net-dns/unbound -http2 dnscrypt
 net-misc/chrony -nts -pts
 sys-devel/gcc -fortran
