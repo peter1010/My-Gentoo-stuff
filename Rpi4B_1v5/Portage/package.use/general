@@ -1,4 +1,5 @@
-app-admin/sudo -sendmail
+app-admin/sudo -sendmail offensive
+app-editors/nano -spell
 app-editors/vim python -crypt -lua -X
 dev-vcs/git -perl
 media-video/motion ffmpeg mmal
