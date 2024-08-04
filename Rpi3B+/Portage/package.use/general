@@ -1,5 +1,5 @@
-app-admin/sudo -sendmail
-app-editors/vim -python -crypt -lua -X
+app-admin/sudo -sendmail offensive
+app-editors/vim python -crypt -lua -X
 dev-vcs/git -perl
 media-video/motion ffmpeg mmal
 net-dns/avahi python -introspection
