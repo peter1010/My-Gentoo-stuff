@@ -1,4 +1,4 @@
-app-admin/sudo -sendmail
+app-admin/sudo -sendmail offensive
 app-editors/vim python -crypt -lua
 app-text/xmlto text
 dev-cpp/cairomm X
