@@ -3,6 +3,5 @@ install Linux on
 
 - Pine64 RockPro64
 - MacBook Pro
-- Raspberry Pi
 - Raspberry Pi 3
 - Raspberry Pi 4
