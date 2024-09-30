@@ -12,7 +12,7 @@ Build::
 
     $make
 
-Installl modules::
+Install modules::
 
     $make modules_install
 
