@@ -20,9 +20,13 @@ check /lib/modules/ contains the modules
 
 Mount the boot partition and copy across the kernel::
 
-    $cp /usr/src/linux/arch/arm/boot/Image /boot/kernel8.img
-    $cp /usr/src/linux/arch/arm/boot/dts/*rpi*.dtb /boot/
+    $cp arch/arm64/boot/Image /boot/kernel8.img
+    $cp arch/arm64/boot/dts/broadcom/*rpi*.dtb /boot/
     $mkdir /boot/overlays
-    $cp /usr/src/linux/arch/arm/boot/dts/overlays/*.dtbo /boot/overlays/
-    $cp /usr/src/linux/arch/arm/boot/dts/overlays/README.txt /boot/overlays/
+    $cp arch/arm/boot/dts/overlays/*.dtbo /boot/overlays/
+    $cp arch/arm/boot/dts/overlays/README /boot/overlays/
 
+Save a defconfig;;
+
+     $make savedefconfig
+     $cp defconfig ..._defconfig
