@@ -1,15 +1,16 @@
-app-admin/sudo -sendmail
+app-admin/sudo -sendmail offensive
 app-crypt/gnupg smartcard usb
-app-editors/vim -python -crypt -lua -X
-app-editors/gvim -python -crypt -lua
+app-editors/vim python -crypt -lua -X
+app-editors/gvim python -crypt -lua
 app-text/xmlto text
 dev-lang/python tk
 dev-lang/rust rustfmt
+dev-libs/bemenu -X wayland
 dev-libs/boost context icu
 dev-vcs/git -perl
 gui-apps/waybar network
 gui-wm/sway -swaybar
-media-gfx/imagemagick jpeg
+media-gfx/imagemagick jpeg -X
 media-libs/libsdl2 gles2
 media-libs/libvpx postproc
 media-libs/sdl2-image jpeg png
@@ -19,12 +20,14 @@ net-dns/avahi python -introspection
 net-dns/unbound -http2 dnscrypt
 net-libs/nodejs inspector
 net-misc/chrony -nts -pts
+net-print/cups -X
 sys-apps/busybox -pam
 sys-apps/smartmontools -daemon -update-drivedb
 sys-auth/seatd server -elogind
 sys-boot/grub truetype
 sys-libs/zlib minizip
+sys-process/psmisc -X
 www-client/chromium -X -hangouts
 www-client/firefox -X
 x11-libs/libva opengl
-
+*/* PYTHON_TARGETS: python3_11 python3_12
