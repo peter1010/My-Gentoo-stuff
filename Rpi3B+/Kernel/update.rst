@@ -26,7 +26,12 @@ Mount the boot partition and copy across the kernel::
     $cp arch/arm/boot/dts/overlays/*.dtbo /boot/overlays/
     $cp arch/arm/boot/dts/overlays/README.txt /boot/overlays/
 
-Create defconfig::
+Save config::
 
     $make savedefconfig
-    $cp defconig ..._defconfig
+    $cp defconfig to .... xx_defconfig
+
+Use previously saved defconfig::
+
+    $cp xx_defconfig arch/<arch>/configs/my_defconfig
+    $make my_defconfig
