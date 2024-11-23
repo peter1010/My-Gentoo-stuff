@@ -85,7 +85,6 @@ Set root ready for startup - temp set up for DNS::
     $cp /etc/resolv.conf /mnt/root/etc/resolv.conf
 
 
-
 Set up hostname::
 
     $vi /mnt/root/etc/hostname
@@ -94,21 +93,6 @@ Set up hostname::
 
     $vi /mnt/root/etc/conf.d/hostname
 
-Set up domainname & network::
-
-    $ln -s net.lo /etc/init.d/net.eth0
-
-    $vi /mnt/root/etc/conf.d/net
-
-
-    dns_domain_lo="home.arpa"
-    config_eth0="dhcp"
-
-    OR
-
-    config_eth0="192.168.11.10/24"
-    routes_eth0="default via 192.168.11.2"
-    dns_servers_eth0="192.168.11.10"
 
 Set up locale::
 
@@ -141,11 +125,6 @@ Fix keymaps, update local::
     $rc-service keymaps restart
     $locale-gen
 
-No network of dhcp so use ifconfig and iproute::
-
-    $ifconfig etho 192.168.11.99/24
-    $route add default gw 192.168.11.2
-
 Set time::
 
     $date MMDDhhmmYYYY
@@ -156,6 +135,36 @@ Create users::
 
     $useradd -m -g users -G wheel peter
     $passwd peter
+
+Temporary set up wpa_supplicant::
+
+    $vi /etc/wpa_supplicant/wpa_supplicant.conf
+
+Add Network::
+
+    ctrl_interface=/var/run/wpa_supplicant
+    update_config=1
+
+    network={
+        scan_ssid=1
+        key_mgmt=WPA-PSK
+        psk="******"
+       ssid="*****"
+    }
+
+replace "*****" with appropriate values
+
+Run wpa_supplicant service::
+
+    $rc-service wpa_supplicant start
+
+No dhcp so use ifconfig and iproute::
+
+    $ifconfig **** 192.168.11.99/24
+    $route add default gw 192.168.11.2
+
+replace **** with wifi network dev
+
 
 Enable sshd if need to do the rest remotely::
 
@@ -173,9 +182,35 @@ Sync portage::
 emerge "base" packages I like::
 
     $emerge --ask net-misc/dhcpcd
+    $emerge --ask net-misc/iwd
+
+Kill wpa_supplicant, start the iwd service::
+
+    $rc-update add iwd
+    $rc-service iwd start
+
+
+Configure iwd::
+
+    $iwctl
+
+    station list
+    station *** scan
+    station *** connect ****
 
 Edit /etc/dhcpcd ...
-uncomment "hostname", comment out "option hostname" we want to supply hostname to the server
+
+uncomment "hostname",
+comment out "option hostname" we want to supply hostname to the server
+uncomment "option ntp_servers"
+
+Add fallback section with static address
+
+Start the dhcpcd service::
+
+    $rc-update add dhcpcd
+    $rc-service dhcpcd
+
 
 emerge "base" packages I like::
 
