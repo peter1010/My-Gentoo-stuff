@@ -2,19 +2,24 @@ app-admin/sudo -sendmail offensive
 app-crypt/gnupg smartcard usb
 app-editors/vim python -crypt -lua -X
 app-editors/gvim python -crypt -lua
+app-text/poppler cairo
 app-text/xmlto text
 dev-lang/python tk
 dev-lang/rust rustfmt
 dev-libs/bemenu -X wayland
 dev-libs/boost context icu
+dev-python/pillow tiff webp
 dev-vcs/git -perl
 gui-apps/waybar network
 gui-wm/sway -swaybar
-media-gfx/imagemagick jpeg -X
+media-gfx/imagemagick -cxx jpeg xml -X
+media-gfx/inkscape exif jpeg -X
+media-libs/gegl cairo
 media-libs/libsdl2 gles2
 media-libs/libvpx postproc
 media-libs/sdl2-image jpeg png
 media-libs/sdl2-mixer vorbis
+media-libs/tiff jpeg
 media-video/motion ffmpeg mmal
 net-dns/avahi python -introspection
 net-dns/unbound -http2 dnscrypt
@@ -31,3 +36,9 @@ www-client/chromium -X -hangouts
 www-client/firefox -X
 x11-libs/libva opengl
 */* PYTHON_TARGETS: python3_11 python3_12
+# required by gnome-base/gnome-keyring-42.1-r2::gentoo
+# required by virtual/secret-service-0::gentoo
+# required by app-crypt/libsecret-0.21.1::gentoo
+# required by app-editors/vscodium-1.92.2.24228::gentoo
+# required by vscodium (argument)
+>=app-crypt/gcr-3.41.1-r2:0 gtk
