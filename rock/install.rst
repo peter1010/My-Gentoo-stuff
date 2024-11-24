@@ -14,6 +14,7 @@ Crate the GPT partition table 'g'
 
 We need to make room for the u-boot images so start first parition at LBA 32768!
 
+
 we use vfat for boot parition and want to end so next partition starts on a 4M boundary so::
 
     n -> p -> 1 -> 32768 -> 409599
@@ -243,10 +244,6 @@ Other packages::
     $emerge alsa-utils
     $emerge opus
     $emerge app-eselect/eselect-repository
-
-DHCP server::
-
-    $emerge net-misc/kea
 
 DNS server::
 
