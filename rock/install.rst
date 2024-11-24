@@ -122,4 +122,160 @@ Create u-boot and install
 
     ...
 
+Set root ready for startup - temp set up for DNS::
+
+    $cp /etc/resolv.conf /mnt/root/etc/resolv.conf
+
+
+Set up hostname::
+
+    $vi /mnt/root/etc/hostname
+
+  and/or
+
+    $vi /mnt/root/etc/conf.d/hostname
+
+
+Set up locale::
+
+    $ln -sf /usr/share/zoneinfo/Europe/London /mnt/root/etc/localtime
+    $echo "Europe/London" > /mnt/root/etc/timezone
+
+set up keymaps::
+
+    $vi /mnt/root/etc/conf.d/keymaps
+
+    keymap="uk"
+
+clear root password::
+
+    $sed -i 's/^root:.*/root::::::::/' /mnt/root/etc/shadow 
+
+
+Edit local.gen::
+
+    $vi /mnt/root/etc/locale.gen
+
+
+umount..
+
+------------------ boot ------------------
+
+Fix keymaps, update local::
+
+    $rc-update add keymaps boot
+    $rc-service keymaps restart
+    $locale-gen
+
+Set time::
+
+    $date MMDDhhmmYYYY
+    $rc-update add swclock boot
+    $rc-update del hwclock boot
+
+Create users::
+
+    $useradd -m -g users -G wheel peter
+    $passwd peter
+
+No dhcp so use ifconfig and iproute::
+
+    $ifconfig **** 192.168.11.99/24
+    $route add default gw 192.168.11.2
+
+replace **** with ethernet network dev
+
+
+Enable sshd if need to do the rest remotely::
+
+    $rc-update add sshd
+    $rc-service sshd start
+
+
+Sync portage::
+
+    $emerge-webrsync
+
+    $eselect profile list
+    $eselect locale list
+
+emerge "base" packages I like::
+
+    $emerge --ask net-misc/dhcpcd
+
+Edit /etc/dhcpcd ...
+
+uncomment "hostname",
+comment out "option hostname" we want to supply hostname to the server
+uncomment "option ntp_servers"
+
+Add fallback section with static address
+
+Start the dhcpcd service::
+
+    $rc-update add dhcpcd
+    $rc-service dhcpcd
+
+
+emerge "base" packages I like::
+
+    $emerge --ask app-misc/screen
+    $emerge --ask app-portage/gentoolkit
+    $emerge --ask app-editors/vim
+        USE=python -crypt, set in package.use subfolder
+    $emerge --ask dev-vcs/git
+        USE=-perl
+    $emerge --ask app-admin/sudo
+        USE=-sendmail
+    $emerge --ask net-misc/chrony
+        USE=-nts -pts -nettle
+    $emerge --ask sysklogd
+
+
+Set root password::
+
+  $passwd
+
+
+Other packages::
+
+    $emerge alsa-lib
+    $emerge alsa-utils
+    $emerge opus
+    $emerge app-eselect/eselect-repository
+
+DHCP server::
+
+    $emerge net-misc/kea
+
+DNS server::
+
+    $emerge net-dns/unbound
+       USE=dnscrypt -http2
+    $emerge ldns-utils 
+        // for drill
+    $emerge bind-tools
+        // for dig
+
+
+Create a local (personal) repositry::
+
+    $eselect repository create local
+
+Add all audio users to the audio group.
+ 
+
+Other things are
+
+  * Update the /etc/portage/make with FEATURES="buildpkg" for the build machine
+
+  * Update USE flags
+
+  * move portage build folders onto faster more robost storage media
+
+  * check for microcode fixes and apply
+
+  * If RAM is low make tmpfiles be on disk see tmpfiles.rst
+
+  * Disable audit by setting audit=0 on kernel cmd line
 
