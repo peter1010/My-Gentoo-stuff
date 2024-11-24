@@ -1,12 +1,5 @@
-=gui-wm/hikari-2.3.3 **
-=app-text/scdoc-1.11.1 ~arm
-=sys-auth/seatd-9999 **
-=dev-libs/libucl-9999 **
-=gui-libs/wlroots-0.15.0-r1 **
-=sys-devel/bmake-20220116 **
-=dev-libs/log4cplus-2.0.7 ~arm
-=net-misc/kea-2.4.1 **
+=media-video/motion-4.3.2-r1 ~arm
+=media-gfx/exif-0.6.22 *
 
-sys-kernel/raspberrypi-sources **
-net-dns/pdns *
-net-dns/nsd **
+sys-kernel/raspberrypi-sources ~arm
+=media-sound/bluez-alsa-4.0.0 **
