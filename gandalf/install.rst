@@ -86,9 +86,13 @@ Edit /boot/cmdline.txt (ls -al will find a saved version)::
 
 Edit /boot/config.txt::
 
-    Add gpu_mem=16
-    Add dtoverlay=hifiberry-digi
-    
+    dtparam=audio=off
+    dtoverlay=vc4-kms-v3d
+    dtoverlay=i2c-rtc,ds3231
+    dtoverlay=disable-bt
+    dtoverlay=disable-wifi
+
+
     $umount /boot
 
 Get stage3 for the Arm7 "stage3-arm7a_hardfp-xxx.tar.xz
@@ -107,8 +111,12 @@ Fixup /mnt/raspberrypi/etc/fstab::
 Adjust  portage/make.conf::
 
 # Raspberry Pi 3 running in 32 bit mode:
-CFLAGS="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
-CXXFLAGS="${CFLAGS}"
+
+COMMON_FLAGS="-O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+CFLAGS="${COMMON_FLAGS}"
+CXXFLAGS="${COMMON_FLAGS}"
+FCFLAGS="${COMMON_FLAGS}"
+FFLAGS="${COMMON_FLAGS}"
 
 
 Get portage-latest.tar.bz2::
@@ -129,7 +137,7 @@ Add following to make.conf::
 If not already done, install cross compiler::
 
     $emerge --ask sys-devel/crossdev
-    $crossdev -S -t arm6j-unknown-linux-gnueabihf
+    $crossdev -S -t armv7a-unknown-linux-gnueabihf
 
 Build the kernel with the cross-compiler::
 
@@ -178,10 +186,6 @@ Set up domainname & network::
 
 
     dns_domain_lo="home.arpa"
-    config_eth0="dhcp"
-
-    OR
-  
     config_eth0="192.168.11.10/24"
     routes_eth0="default via 192.168.11.2"
     dns_servers_eth0="192.168.11.10"
@@ -251,13 +255,6 @@ Sync portage::
 
     $eselect profile list
     $eselect locale list
-
-emerge "base" packages I like::
-
-    $emerge --ask net-misc/dhcpcd
-
-Edit /etc/dhcpcd ...
-uncomment "hostname", comment out "option hostname" we want to supply hostname to the server
 
 emerge "base" packages I like::
 

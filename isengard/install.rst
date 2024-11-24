@@ -137,9 +137,9 @@ so perhaps make a symbolic link to a generic folder linux-rpi::
 
     $cd /usr/src/linux-rpi
     $make ARCH=arm bcm2709_defconfig
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- oldconfig
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- -j1
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- modules_install INSTALL_MOD_PATH=/mnt/rpi/
+    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig
+    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1
+    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/rpi/
 
 
 
@@ -148,10 +148,10 @@ check /mnt/rpi/lib/modules/ contains the modules
 Mount the boot partition and copy across the kernel::
 
     $mount /dev/sdc1 /mnt/rpi/boot
-    $cp arch/arm/boot/Image /mnt/rpi/boot/kernel8.img
+    $cp arch/arm64/boot/Image /mnt/rpi/boot/kernel8.img
     $cp arch/arm/boot/dts/*.dtb /mnt/rpi/boot/
     $mkdir /mnt/rpi/boot/overlays
-    $cp arch/arm/boot/dts/overlays/* /mnt/rpi/boot/overlays/ 
+    $cp arch/arm64/boot/dts/overlays/* /mnt/rpi/boot/overlays/ 
 
 Set root ready for startup - temp set up for DNS::
 
