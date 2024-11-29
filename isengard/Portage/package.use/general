@@ -6,3 +6,4 @@ media-video/motion ffmpeg mmal
 net-dns/unbound -http2 dnscrypt
 net-misc/chrony -nts -pts
 sys-devel/gcc -fortran
+net-dns/nsd -tfo
