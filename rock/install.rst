@@ -10,10 +10,9 @@ For RockPo64, we use GPT and a EFI partition::
 
 Delete all paritions with the 'd' command
 
-Crate the GPT partition table 'g'
+Create the GPT partition table 'g'
 
 We need to make room for the u-boot images so start first parition at LBA 32768!
-
 
 we use vfat for boot parition and want to end so next partition starts on a 4M boundary so::
 
