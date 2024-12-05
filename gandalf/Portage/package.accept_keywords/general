@@ -8,5 +8,5 @@
 =net-misc/kea-2.4.1 **
 
 sys-kernel/raspberrypi-sources **
-net-dns/pdns *
-net-dns/nsd **
+net-dns/nsd *
+mail-mta/msmtp *

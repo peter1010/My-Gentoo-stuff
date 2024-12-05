@@ -248,6 +248,7 @@ Enable sshd if need to do the rest remotely::
     $rc-update add sshd
     $rc-service sshd start
 
+    $usermod -a -G cron peter
 
 Sync portage::
 
@@ -269,12 +270,15 @@ emerge "base" packages I like::
     $emerge --ask net-misc/chrony
         USE=-nts -pts -nettle
     $emerge --ask sysklogd
+    $energe --ask dcron
 
+    $usermod -a -G cron peter
+    $rc-update add dcron default
+    $rc-service dcron restart
 
 Set root password::
 
   $passwd
-
 
 Other packages::
 
@@ -291,8 +295,6 @@ DNS server::
 
     $emerge net-dns/unbound
        USE=dnscrypt -http2
-    $emerge ldns-utils 
-        // for drill
     $emerge bind-tools
         // for dig
 
@@ -317,8 +319,6 @@ Other things are
   * If RAM is low make tmpfiles be on disk see tmpfiles.rst
 
   * Disable audit by setting audit=0 on kernel cmd line
-
-  * haveged and rng-tools no longer need to un-install
 
   on pi add to /boot/cmdline
 
