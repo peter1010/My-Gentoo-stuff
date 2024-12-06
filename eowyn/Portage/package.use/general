@@ -1,5 +1,5 @@
 app-admin/sudo -sendmail offensive
-app-editors/vim +python -crypt -lua -X
+app-editors/vim python -crypt -lua -X
 dev-lang/rust -lto
 dev-vcs/git -perl
 media-libs/libv4l jpeg
