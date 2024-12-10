@@ -1,4 +1,5 @@
 app-admin/sysklogd ~arm64
+app-admin/sshguard ~arm64
 dev-libs/date **
 dev-libs/bemenu ~arm64
 gui-apps/waybar *
@@ -10,6 +11,7 @@ dev-python/csscompressor **
 dev-python/pipenv **
 dev-python/poetry **
 dev-python/poetry-plugin-export **
+dev-python/pkginfo ~arm64
 dev-python/shellingham **
 dev-python/virtualenv-clone **
 games-strategy/wesnoth **
