@@ -291,6 +291,14 @@ DHCP server::
 
     $emerge net-misc/kea
 
+Note: the default install is not quite and needs some tweaking in particular the following needs adjusting
+1/ kea needs to run as dhcp (not root) so add -u dhcp to start-stop-daemon in /etc/init.d/kea
+2/ kea creates a pidfile so remove -m option from start-stop-daemon
+3/ kea creates the pidfile in /run/kea/ folder so again /etc/init.d/kea definitions need adjusting for this
+4/ logging to "syslog" doesn't work, this could be because kea is running as 'dhcp' user
+5/ logging to file needs correct permissions on /var/log/kea/ folder to allow kea to generate the log files
+
+
 DNS server::
 
     $emerge net-dns/unbound
