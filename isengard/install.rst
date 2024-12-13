@@ -258,6 +258,7 @@ emerge "base" packages I like::
     $emerge --ask net-misc/chrony
     $emerge --ask rsyslog
     $emerge --ask dcron
+    $emerge --ask logrotate
 
     $rc-update add chronyd
     $rc-service chronyd start
