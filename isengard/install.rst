@@ -244,20 +244,31 @@ Sync portage::
     $eselect profile list
     $eselect locale list
 
+Setup portage use flags::
+
+    copy from my github the general uses file
+
 emerge "base" packages I like::
 
     $emerge --ask app-misc/screen
     $emerge --ask app-portage/gentoolkit
     $emerge --ask app-editors/vim
-        USE=python -crypt, set in package.use subfolder
     $emerge --ask dev-vcs/git
-        USE=-perl
     $emerge --ask app-admin/sudo
-        USE=-sendmail
     $emerge --ask net-misc/chrony
-        USE=-nts -pts -nettle
-    $emerge --ask sysklogd
+    $emerge --ask rsyslog
+    $emerge --ask dcron
 
+    $rc-update add chronyd
+    $rc-service chronyd start
+
+Adjust /etc/chrony to point to time services::
+
+    $rc-update add dcron
+    $rc-service dcron start
+
+    $rc-update add rsyslog
+    $rc-service rsyslog start
 
 Set root password::
 
@@ -277,12 +288,7 @@ DHCP server::
 
 DNS server::
 
-    $emerge net-dns/unbound
-       USE=dnscrypt -http2
-    $emerge ldns-utils 
-        // for drill
-    $emerge bind-tools
-        // for dig
+    $emerge net-dns/bind
 
 
 Create a local (personal) repositry::
