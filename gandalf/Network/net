@@ -1,0 +1,14 @@
+config_eth0="192.168.11.10/24"
+
+ip6token_eth0="::10"
+
+routes_eth0="default via 192.168.11.5
+217.169.20.20/31 via 192.168.11.5
+185.214.220.7/32 via 192.168.11.2
+185.130.156.7/32 via 192.168.11.2"
+
+
+dns_servers_eth0="192.168.11.10"
+dns_search_eth0="home.arpa"
+
+
