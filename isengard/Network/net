@@ -1,24 +1,23 @@
-config_eth0="192.168.11.10/24"
-
+config_eth0="192.168.11.11/24"
 
 routes_eth0="default via 192.168.11.5
 217.169.20.20/31 via 192.168.11.5
 185.214.220.7/32 via 192.168.11.2
 185.130.156.7/32 via 192.168.11.2"
 
-dns_servers_eth0="192.168.11.10"
+dns_servers_eth0="192.168.11.11"
 dns_search_eth0="home.arpa"
 
 # set IPv6 interface token
 preup() {
-  ip token set ::10 dev eth0
+  ip token set ::11 dev eth0
   return 0
 }
 
-# optional: assign the token ::10 address to fe80:
+# optional: assign the token ::11 address to fe80:
 postup() {
   ip addr flush scope link dev eth0
-  ip addr add fe80::10/64 dev eth0
+  ip addr add fe80::11/64 dev eth0
   return 0
 }
 
