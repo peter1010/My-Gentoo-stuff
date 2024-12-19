@@ -270,7 +270,7 @@ emerge "base" packages I like::
     $emerge --ask net-misc/chrony
         USE=-nts -pts -nettle
     $emerge --ask sysklogd
-    $energe --ask dcron
+    $emerge --ask dcron
 
     $usermod -a -G cron peter
     $rc-update add dcron default
