@@ -33,7 +33,7 @@ sys-boot/grub truetype
 sys-libs/zlib minizip
 sys-process/psmisc -X
 www-client/chromium -X -hangouts
-www-client/firefox -X
+www-client/firefox -X wayland dbus
 x11-libs/libva opengl
 */* PYTHON_TARGETS: python3_11 python3_12
 # required by gnome-base/gnome-keyring-42.1-r2::gentoo

@@ -1,2 +1,12 @@
+# * — Package is visible if it is stable on any architecture.
+# ~* — Package is visible if it is in testing on any architecture.
+# ** — Package is always visible (KEYWORDS are ignored completely).
+
+app-misc/khal ~*
 sys-kernel/raspberrypi-sources **
+dev-python/aiohttp-oauthlib ~*
+dev-python/aiostream ~*
+dev-python/click-log ~*
+dev-python/vdirsyncer ~*
 app-laptop/mbpfan **
+net-mail/isync **
