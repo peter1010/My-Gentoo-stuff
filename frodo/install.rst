@@ -258,7 +258,16 @@ Create a local (personal) repositry::
     $eselect repository create local
 
 Add all audio users to the audio group.
- 
+
+Change the action of pressing the power button when powered::
+
+    edit /etc/elogind/logind.conf
+
+    Change HandlePowerKey to 'ignore'
+    Change HandlePowerKeyLongPress to 'poweroff'
+
+    rc-service elogind restart
+
 
 Other things are
 
