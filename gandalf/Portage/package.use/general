@@ -3,6 +3,7 @@ app-editors/vim python -crypt -lua -X
 dev-vcs/git -perl
 media-video/motion ffmpeg mmal
 net-dns/avahi python -introspection
+net-dns/bind doh
 net-dns/unbound -http2 dnscrypt -tfo
 net-misc/chrony -nts -pts
 sys-devel/gcc -fortran
