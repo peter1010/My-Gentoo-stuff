@@ -3,6 +3,8 @@ app-crypt/gnupg smartcard usb
 app-editors/vim python -crypt -lua -X
 app-editors/gvim python -crypt -lua
 app-text/poppler cairo
+app-text/texlive -X graphics
+app-text/texlive-core -X
 app-text/xmlto text
 dev-lang/python tk
 dev-lang/rust rustfmt
