@@ -1,63 +1,58 @@
-====================
-Using a Live CD
-====================
+# Using a Live CD
 
 Format the HD like so..
 
-Disklabel type: gpt
+### Disklabel type: gpt
 
-Device        Start       End   Sectors   Size Type
-/dev/sda1      2048    526335    524288   256M EFI System
-/dev/sda2    526336  34080767  33554432    16G Linux swap
-/dev/sda3  34080768 977105026 943024259 449.7G Linux filesystem
+|Device | Start | End | Sectors | Size | Type |
+|/dev/sda1 | 2048 | 526335 | 524288 | 256M | EFI System |
+|/dev/sda2 | 526336 | 34080767 | 33554432 | 16G | Linux swap |
+|/dev/sda3 | 34080768 | 977105026 | 943024259 | 449.7G | Linux filesystem |
 
-create filesystems for each::
+### create filesystems for each
 
-    $mkfs.vfat -n BOOT /dev/sda1
-    $mkfs.ext4 -L ROOT /dev/sda2
-    $mkswap  -L SWAP /dev/sda3
+> $mkfs.vfat -n BOOT /dev/sda1
+> $mkfs.ext4 -L ROOT /dev/sda2
+> $mkswap -L SWAP /dev/sda3
 
 create & chroot to gentoo environment on PC (if not already using Gentoo)
-
 
 From https://www.gentoo.org/downloads/
 
 Get stage3 stage3-amd64-openrc-xxx.tar.xz
 
-Mount root parition and untar stage3..::
+### Mount root parition and untar stage3..
 
-    $mount /dev/sda3 /mnt/root
-    $tar -xpf stage3-xxx -C /mnt/root
+> $mount /dev/sda3 /mnt/root
+> $tar -xpf stage3-xxx -C /mnt/root
 
-Fixup /mnt/root/etc/fstab::
+Fixup /mnt/root/etc/fstab
 
-/dev/sda1          /boot           auto            noauto,noatime  1 2
-/dev/sda2          none            swap            sw              0 0
-/dev/sda3          /               ext4            noatime         0 1
+> /dev/sda1          /boot           auto            noauto,noatime  1 2
+> /dev/sda2          none            swap            sw              0 0
+> /dev/sda3          /               ext4            noatime         0 1
 
-Get portage-latest.tar.bz2::
+### Get portage-latest.tar.bz2
 
-    $wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2
+> $wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2
+> $tar xpf portage-latest.tar.bz2 -C /mnt/root/usr
+>
+> $mkdir /mnt/root/etc/portage/repos.conf
+> $cp /mnt/root/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
 
-    $tar xpf portage-latest.tar.bz2 -C /mnt/root/usr
+### Adjust portage/make.conf
 
-    $mkdir /mnt/root/etc/portage/repos.conf
-    $cp /mnt/root/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
+Add following to make.conf
 
-Adjust  portage/make.conf::
+> BINPKG_FORMAT="gpkg"
+> FEATURES="buildpkg"
+> MAKEOPTS="-j1"
+> LINGUAS="en_GB"
+> L10N="en-GB"
 
+## Build the kernel
 
-Add following to make.conf::
-
-    BINPKG_FORMAT="gpkg"
-    FEATURES="buildpkg"
-    MAKEOPTS="-j1"
-    LINGUAS="en_GB"
-    L10N="en-GB"
-
-Build the kernel::
-
-    $emerge --ask sys-kernel/gentoo-sources
+> $emerge --ask sys-kernel/gentoo-sources
 
 Source will end up in /usr/src/linux-xxx-yyy-zzz
 
