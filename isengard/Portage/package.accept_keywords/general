@@ -1,4 +1,4 @@
 dev-libs/log4cplus ~arm64
 media-video/motion **
-net-dns/nsd *
+
 net-misc/kea ~arm64
