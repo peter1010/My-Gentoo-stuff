@@ -54,32 +54,32 @@ create filesystems for each
 
 create & chroot to gentoo environment on PC (if not already using Gentoo)
 
-Hint for non-gentoo native PC::
+Hint for non-gentoo native PC
 
-    Download stage3-amd64-openrx-xxx.tar.xz from gentoo
-    create /mnt/gentoo
-    unzip stage3 into /mnt/gentoo
+Download stage3-amd64-openrx-xxx.tar.xz from gentoo  
+Create /mnt/gentoo  
+Unzip stage3 into /mnt/gentoo  
 
-    cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf
+> $cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf  
 
-    $mount -types proc /proc /mnt/gentoo/proc
-    $mount --rbind /sys /mnt/gentoo/sys
-    $mount --make-rslave /mnt/gentoo/sys
-    $mount --rbind /dev /mnt/gentoo/dev
-    $mount --make-rslave /mnt/gentoo/dev
-    $mount --bind /run /mnt/gentoo/run
-    $mount --make-slave /mnt/gentoo/run
-    $chroot /mnt/gentoo /bin/bash
+> $mount -types proc /proc /mnt/gentoo/proc  
+> $mount --rbind /sys /mnt/gentoo/sys  
+> $mount --make-rslave /mnt/gentoo/sys  
+> $mount --rbind /dev /mnt/gentoo/dev  
+> $mount --make-rslave /mnt/gentoo/dev  
+> $mount --bind /run /mnt/gentoo/run  
+> $mount --make-slave /mnt/gentoo/run  
+> $chroot /mnt/gentoo /bin/bash  
 
-    $source /etc/profile
-    $export PS1="(chroot) ${PS1}"
+> $source /etc/profile  
+> $export PS1="(chroot) ${PS1}"  
 
-Mount SD boot parition::
+Mount SD boot parition
 
-    $mount /dev/sdc1 /boot
-    $emerge --ask sys-boot/raspberrypi-firmware
+> $mount /dev/sdc1 /boot  
+> $emerge --ask sys-boot/raspberrypi-firmware  
 
-Edit /boot/cmdline.txt (ls -al will find a saved version)::
+Edit /boot/cmdline.txt (ls -al will find a saved version)
 
     Add audit=0 selinux=0
     change root=/dev/mmcblk0p2
@@ -93,40 +93,40 @@ Edit /boot/config.txt::
     dtoverlay=disable-wifi
 
 
-    $umount /boot
+> $umount /boot
 
 Get stage3 for the Arm7 "stage3-arm7a_hardfp-xxx.tar.xz
 
-Mount sd card root parition and untar stage3..::
+### Mount sd card root parition and untar stage3..
 
-    $mount /dev/sdc2 /mnt/rpi
-    $tar -xpf stage3-xxx -C /mnt/rpi
+> $mount /dev/sdc2 /mnt/rpi  
+> $tar -xpf stage3-xxx -C /mnt/rpi  
 
-Fixup /mnt/raspberrypi/etc/fstab::
+Fixup /mnt/raspberrypi/etc/fstab
 
-/dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2
-/dev/mmcblk0p2          /               ext4            noatime         0 1     
-/dev/mmcblk0p3          none            swap            sw              0 0
+    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2
+    /dev/mmcblk0p2          /               ext4            noatime         0 1     
+    /dev/mmcblk0p3          none            swap            sw              0 0
 
-Adjust  portage/make.conf::
+### Adjust  portage/make.conf
 
-# Raspberry Pi 3 running in 32 bit mode:
+Raspberry Pi 3 running in 32 bit mode:
 
-COMMON_FLAGS="-O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
-CFLAGS="${COMMON_FLAGS}"
-CXXFLAGS="${COMMON_FLAGS}"
-FCFLAGS="${COMMON_FLAGS}"
-FFLAGS="${COMMON_FLAGS}"
+    COMMON_FLAGS="-O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    CFLAGS="${COMMON_FLAGS}"
+    CXXFLAGS="${COMMON_FLAGS}"
+    FCFLAGS="${COMMON_FLAGS}"
+    FFLAGS="${COMMON_FLAGS}"
 
 
-Get portage-latest.tar.bz2::
+Get portage-latest.tar.bz2
 
-    $tar xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
+> $tar xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
 
-    $mkdir /mnt/rpi/etc/portage/repos.conf
-    $cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
+> $mkdir /mnt/rpi/etc/portage/repos.conf  
+> $cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
 
-Add following to make.conf::
+Add following to make.conf
 
     LC_MESSAGES=C
     BINPKG_FORMAT="gpkg"
@@ -136,29 +136,29 @@ Add following to make.conf::
     EMERGE_DEFAULT_OPTS="--jobs=1 --ask"
     USE="alsa -pulseaudio -dbus -systemd"
 
-If not already done, install cross compiler::
+If not already done, install cross compiler
 
-    $emerge --ask sys-devel/crossdev
-    $crossdev -S -t armv7a-unknown-linux-gnueabihf
+> $emerge --ask sys-devel/crossdev  
+> $crossdev -S -t armv7a-unknown-linux-gnueabihf
 
-Build the kernel with the cross-compiler::
+Build the kernel with the cross-compiler
 
-    $emerge --ask sys-kernel/raspberrypi-sources
+> $emerge --ask sys-kernel/raspberrypi-sources
 
 Source will end up in /usr/src/linux-xxx-yyy-zzz
 so perhaps make a symbolic link to a generic folder linux-rpi::
 
-    $cd /usr/src/linux-rpi
-    $make ARCH=arm bcm2709_defconfig
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- oldconfig
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- -j1
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- modules_install INSTALL_MOD_PATH=/mnt/rpi/
+> $cd /usr/src/linux-rpi  
+> $make ARCH=arm bcm2709_defconfig  
+> $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- oldconfig  
+> $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- -j1  
+> $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- modules_install INSTALL_MOD_PATH=/mnt/rpi/  
 
 
 
 check /mnt/rpi/lib/modules/ contains the modules
 
-Mount the boot partition and copy across the kernel::
+Mount the boot partition and copy across the kernel
 
     $mount /dev/sdc1 /mnt/rpi/boot
     $cp arch/arm/boot/Image /mnt/rpi/boot/kernel.img
