@@ -11,7 +11,7 @@
 
 ## Or
 
-> $cp xxx/MacBookPro_linux_defconfig to /usr/src/linux/arch/arm64/configs/
+> $cp xxx/MacBookPro_linux_defconfig to /usr/src/linux/arch/x86_6/configs/
 > $make MacbooPro_defconfig
 
 # Refresh the config
@@ -32,7 +32,7 @@ check /lib/modules/ contains the modules
 
 > $cp arch/x86_64/boot/bzImage /boot/vmlinuz_xxxx.bz
 
-# Save config::
+# Save config
 
 > $make savedefconfig  
 > $cp defconfig to .... xx_defconfig  
