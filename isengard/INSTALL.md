@@ -48,32 +48,36 @@ Hint for non-gentoo native PC
     create /mnt/gentoo
     unzip stage3 into /mnt/gentoo
 
-    cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf
+> $cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf 
 
-    $mount -types proc /proc /mnt/gentoo/proc
-    $mount --rbind /sys /mnt/gentoo/sys
-    $mount --make-rslave /mnt/gentoo/sys
-    $mount --rbind /dev /mnt/gentoo/dev
-    $mount --make-rslave /mnt/gentoo/dev
-    $mount --bind /run /mnt/gentoo/run
-    $mount --make-slave /mnt/gentoo/run
-    $chroot /mnt/gentoo /bin/bash
+> $mount -types proc /proc /mnt/gentoo/proc 
+> $mount --rbind /sys /mnt/gentoo/sys 
+> $mount --make-rslave /mnt/gentoo/sys 
+> $mount --rbind /dev /mnt/gentoo/dev 
+> $mount --make-rslave /mnt/gentoo/dev 
+> $mount --bind /run /mnt/gentoo/run 
+> $mount --make-slave /mnt/gentoo/run 
+> $chroot /mnt/gentoo /bin/bash 
 
-    $source /etc/profile
-    $export PS1="(chroot) ${PS1}"
+> $source /etc/profile 
+> $export PS1="(chroot) ${PS1}" 
 
 Mount SD boot parition.
 
-    $mount /dev/sdc1 /boot
-    $emerge --ask sys-boot/raspberrypi-firmware
+> $mount /dev/sdc1 /boot
 
-Edit /boot/cmdline.txt (ls -al will find a saved version)::
+Triple check you have mounted the right /boot as you don't want to distroy the host 
+
+> $emerge --ask sys-boot/raspberrypi-firmware
+
+Edit /boot/cmdline.txt (ls -al will find a saved version)
 
     Add audit=0 selinux=0
     change root=/dev/mmcblk0p2
 
-Edit /boot/config.txt::
+Edit /boot/config.txt
 
+    dtparam=audio=off
     dtoverlay=vc4-fkms-v3d
     max_framebuffers=2
     dtoverlay=i2c-rtc,ds3231
@@ -81,32 +85,31 @@ Edit /boot/config.txt::
     dtoverlay=disable-wifi
 
 
-    $umount /boot
+> $umount /boot
 
-Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.zx"
+Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.zx" from https://distfiles.gentoo.org/releases/
 
-Mount sd card root parition and untar stage3..::
+Mount sd card root parition and untar stage3..
 
-    $mount /dev/sdc2 /mnt/rpi
-    $tar -xpf stage3-xxx -C /mnt/rpi
+> $mount /dev/sdc2 /mnt/rpi 
+> $tar -xpf stage3-xxx -C /mnt/rpi 
 
-Fixup /mnt/raspberrypi/etc/fstab::
+Fixup /mnt/rpi/etc/fstab
 
-/dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2
-/dev/mmcblk0p2          /               ext4            noatime         0 1     
+    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2
+    /dev/mmcblk0p2          /               ext4            noatime         0 1     
 
-Adjust  portage/make.conf::
+Adjust portage/make.conf
 
 # Raspberry Pi 4 running:
 
-COMMON_FLAGS="-O2 -mcpu=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
-CFLAGS="${COMMON_FLAGS}"
-CXXFLAGS="${COMMON_FLAGS}"
-FCFLAGS="${COMMON_FLAGS}"
-FFLAGS="${COMMON_FLAGS}"
+    COMMON_FLAGS="-O2 -mcpu=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
+    CFLAGS="${COMMON_FLAGS}"
+    CXXFLAGS="${COMMON_FLAGS}"
+    FCFLAGS="${COMMON_FLAGS}"
+    FFLAGS="${COMMON_FLAGS}"
 
-
-Get portage-latest.tar.bz2::
+Get portage-latest.tar.bz2
 
     $tar xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
 
@@ -118,30 +121,29 @@ Add following to make.conf::
     BINPKG_FORMAT="gpkg"
     FEATURES="buildpkg"
     MAKEOPTS="-j1"
-    LINGUAS="en_GB"
-    L10N="en-GB"
+    LINGUAS="en_GB en fr"
+    L10N="en-GB en fr"
+    EMERGE_DEFAULT_OPTS="--jobs=1 --ask"
 
-If not already done, install cross compiler::
+If not already done, install cross compiler
 
-    $emerge --ask sys-devel/crossdev
-    $crossdev -S -t aarch64-unknown-linux-gnu
+> $emerge --ask sys-devel/crossdev
+> $crossdev -S -t aarch64-unknown-linux-gnu
 
-Build the kernel with the cross-compiler::
+Build the kernel with the cross-compiler
 
-    $emerge --ask sys-kernel/raspberrypi-sources
+> $emerge --ask sys-kernel/raspberrypi-sources
 
 Source will end up in /usr/src/linux-xxx-yyy-zzz
-so perhaps make a symbolic link to a generic folder linux-rpi::
+so perhaps make a symbolic link to a generic folder linux-rpi
 
     $cd /usr/src/linux-rpi
     $make ARCH=arm bcm2709_defconfig
     $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig
     $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1
-    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/rpi/
-
-
-
-check /mnt/rpi/lib/modules/ contains the modules
+    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/rpi/'
+    
+Check /mnt/rpi/lib/modules/ contains the modules
 
 Mount the boot partition and copy across the kernel::
 
