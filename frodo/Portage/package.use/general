@@ -3,7 +3,7 @@ app-crypt/gnupg smartcard usb
 app-editors/vim python -crypt -lua -X
 app-editors/gvim python -crypt -lua
 app-text/poppler cairo
-app-text/texlive -X graphics
+app-text/texlive -X graphics extra png
 app-text/texlive-core -X
 app-text/xmlto text
 dev-lang/python tk
@@ -18,11 +18,14 @@ media-gfx/imagemagick -cxx jpeg xml -X
 media-gfx/inkscape exif jpeg -X
 media-libs/gd truetype fontconfig
 media-libs/gegl cairo
+media-libs/libpulse -X -asyncns -dbus -glib
 media-libs/libsdl2 gles2
 media-libs/libvpx postproc
 media-libs/sdl2-image jpeg png
 media-libs/sdl2-mixer vorbis
 media-libs/tiff jpeg
+media-plugins/alsa-plugins pulseaudio -mix -usb_stream
+media-sound/pulseaudio-daemon -X -alsa -alsa-plugin -udev -asyncns -dbus -webrtc-aec -ssl -orc -elogind -glib -gdbm
 media-video/motion ffmpeg mmal
 net-dns/avahi python -introspection
 net-dns/unbound -http2 dnscrypt
