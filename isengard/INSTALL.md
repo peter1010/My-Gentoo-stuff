@@ -26,23 +26,23 @@ Set parition types
 
 Example:
 
-Device         Boot  Start      End  Sectors  Size Id Type
-/dev/sdc1 *      2048   409599   407552  199M  c W95 FAT32 (LBA)
-/dev/sdc2      409600 62333951 61924352 29.5G 83 Linux
-
+| Device    | Start    | End      | Sectors  | Size  | Type          |
+| --------- |--------- | -------- | -------- | ----- | ------------- |
+| /dev/sdc1 |     2048 |   409599 |   407552 |  199M |  c W95 FAT32  |
+| /dev/sdc2 |   409600 | 60645375 | 61924352 | 29.5G | 83 Linux      |
 
 Check the boundaries
 
 409600 / (2 * 1024 * 4) = 50
 
-create filesystems for each::
+Create filesystems for each.
 
-    $mkfs.vfat -n BOOT /dev/sdc1
-    $mkfs.ext4 -L ROOT /dev/sdc2
+> $mkfs.vfat -n BOOT /dev/sdc1  
+> $mkfs.ext4 -L ROOT /dev/sdc2  
 
-create & chroot to gentoo environment on PC (if not already using Gentoo)
+Create & chroot to gentoo environment on PC (if not already using Gentoo)
 
-Hint for non-gentoo native PC::
+Hint for non-gentoo native PC
 
     Download stage3-amd64-openrx-xxx.tar.xz from gentoo
     create /mnt/gentoo
@@ -62,7 +62,7 @@ Hint for non-gentoo native PC::
     $source /etc/profile
     $export PS1="(chroot) ${PS1}"
 
-Mount SD boot parition::
+Mount SD boot parition.
 
     $mount /dev/sdc1 /boot
     $emerge --ask sys-boot/raspberrypi-firmware
