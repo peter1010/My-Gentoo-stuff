@@ -147,11 +147,11 @@ Check /mnt/rpi/lib/modules/ contains the modules
 
 Mount the boot partition and copy across the kernel::
 
-    $mount /dev/sdc1 /mnt/rpi/boot
-    $cp arch/arm64/boot/Image /mnt/rpi/boot/kernel8.img
-    $cp arch/arm/boot/dts/*.dtb /mnt/rpi/boot/
-    $mkdir /mnt/rpi/boot/overlays
-    $cp arch/arm64/boot/dts/overlays/* /mnt/rpi/boot/overlays/ 
+> mount /dev/sdc1 /mnt/rpi/boot  
+> cp arch/arm64/boot/Image /mnt/rpi/boot/kernel8.img  
+> cp arch/arm/boot/dts/\*.dtb /mnt/rpi/boot/  
+> mkdir /mnt/rpi/boot/overlays  
+> cp arch/arm64/boot/dts/overlays/\* /mnt/rpi/boot/overlays/  
 
 Set root ready for startup - temp set up for DNS::
 
