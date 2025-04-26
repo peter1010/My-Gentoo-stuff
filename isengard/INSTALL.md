@@ -2,7 +2,7 @@
 
 For Raspberry PI, we use MBR boot sector (to be backwards compatible).
 
-> $sudo fdisk /dev/sdc
+> sudo fdisk /dev/sdc
 
 Delete all paritions with the 'd' command.
 
@@ -37,8 +37,8 @@ Check the boundaries
 
 Create filesystems for each.
 
-> $mkfs.vfat -n BOOT /dev/sdc1  
-> $mkfs.ext4 -L ROOT /dev/sdc2  
+> mkfs.vfat -n BOOT /dev/sdc1  
+> mkfs.ext4 -L ROOT /dev/sdc2  
 
 Create & chroot to gentoo environment on PC (if not already using Gentoo)
 
@@ -48,27 +48,27 @@ Hint for non-gentoo native PC
     create /mnt/gentoo
     unzip stage3 into /mnt/gentoo
 
-> $cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf 
+> cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf 
 
-> $mount -types proc /proc /mnt/gentoo/proc  
-> $mount --rbind /sys /mnt/gentoo/sys  
-> $mount --make-rslave /mnt/gentoo/sys  
-> $mount --rbind /dev /mnt/gentoo/dev  
-> $mount --make-rslave /mnt/gentoo/dev  
-> $mount --bind /run /mnt/gentoo/run  
-> $mount --make-slave /mnt/gentoo/run  
-> $chroot /mnt/gentoo /bin/bash  
+> mount -types proc /proc /mnt/gentoo/proc  
+> mount --rbind /sys /mnt/gentoo/sys  
+> mount --make-rslave /mnt/gentoo/sys  
+> mount --rbind /dev /mnt/gentoo/dev  
+> mount --make-rslave /mnt/gentoo/dev  
+> mount --bind /run /mnt/gentoo/run  
+> mount --make-slave /mnt/gentoo/run  
+> chroot /mnt/gentoo /bin/bash  
 
-> $source /etc/profile  
-> $export PS1="\(chroot\) $\{PS1\}" 
+> source /etc/profile  
+> export PS1="\(chroot\) \$\{PS1\}"
 
 Mount SD boot parition.
 
-> $mount /dev/sdc1 /boot
+> mount /dev/sdc1 /boot
 
 Triple check you have mounted the right /boot as you don't want to distroy the host 
 
-> $emerge --ask sys-boot/raspberrypi-firmware
+> emerge --ask sys-boot/raspberrypi-firmware
 
 Edit /boot/cmdline.txt (ls -al will find a saved version)
 
@@ -85,14 +85,14 @@ Edit /boot/config.txt
     dtoverlay=disable-wifi
 
 
-> $umount /boot
+> umount /boot
 
 Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.zx" from https://distfiles.gentoo.org/releases/
 
 Mount sd card root parition and untar stage3..
 
-> $mount /dev/sdc2 /mnt/rpi  
-> $tar -xpf stage3-xxx -C /mnt/rpi 
+> mount /dev/sdc2 /mnt/rpi  
+> tar -xpf stage3-xxx -C /mnt/rpi 
 
 Fixup /mnt/rpi/etc/fstab
 
@@ -111,12 +111,12 @@ Adjust portage/make.conf
 
 Get portage-latest.tar.bz2
 
-    $tar xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
+> tar -xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
 
-    $mkdir /mnt/rpi/etc/portage/repos.conf  
-    $cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
+> mkdir /mnt/rpi/etc/portage/repos.conf  
+> cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
 
-Add following to make.conf::
+Add following to make.conf
 
     BINPKG_FORMAT="gpkg"
     FEATURES="buildpkg"
@@ -127,18 +127,18 @@ Add following to make.conf::
 
 If not already done, install cross compiler
 
-> $emerge --ask sys-devel/crossdev
-> $crossdev -S -t aarch64-unknown-linux-gnu
+> emerge --ask sys-devel/crossdev
+> crossdev -S -t aarch64-unknown-linux-gnu
 
 Build the kernel with the cross-compiler
 
-> $emerge --ask sys-kernel/raspberrypi-sources
+> emerge --ask sys-kernel/raspberrypi-sources
 
 Source will end up in /usr/src/linux-xxx-yyy-zzz
 so perhaps make a symbolic link to a generic folder linux-rpi
 
-    $cd /usr/src/linux-rpi
-    $make ARCH=arm bcm2709_defconfig
+> cd /usr/src/linux-rpi
+> make ARCH=arm bcm2709_defconfig
     $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig
     $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1
     $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/rpi/'
