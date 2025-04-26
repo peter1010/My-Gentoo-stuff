@@ -1,6 +1,4 @@
-====================
-On a host PC
-====================
+# On a host PC
 
 For Raspberry PI, we use MBR boot sector (to be backwards compatible)::
 
