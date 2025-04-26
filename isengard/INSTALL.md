@@ -50,17 +50,17 @@ Hint for non-gentoo native PC
 
 > $cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf 
 
-> $mount -types proc /proc /mnt/gentoo/proc 
-> $mount --rbind /sys /mnt/gentoo/sys 
-> $mount --make-rslave /mnt/gentoo/sys 
-> $mount --rbind /dev /mnt/gentoo/dev 
-> $mount --make-rslave /mnt/gentoo/dev 
-> $mount --bind /run /mnt/gentoo/run 
-> $mount --make-slave /mnt/gentoo/run 
-> $chroot /mnt/gentoo /bin/bash 
+> $mount -types proc /proc /mnt/gentoo/proc  
+> $mount --rbind /sys /mnt/gentoo/sys  
+> $mount --make-rslave /mnt/gentoo/sys  
+> $mount --rbind /dev /mnt/gentoo/dev  
+> $mount --make-rslave /mnt/gentoo/dev  
+> $mount --bind /run /mnt/gentoo/run  
+> $mount --make-slave /mnt/gentoo/run  
+> $chroot /mnt/gentoo /bin/bash  
 
-> $source /etc/profile 
-> $export PS1="(chroot) ${PS1}" 
+> $source /etc/profile  
+> $export PS1="\(chroot\) $\{PS1\}" 
 
 Mount SD boot parition.
 
@@ -91,7 +91,7 @@ Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.zx" from https://distfiles
 
 Mount sd card root parition and untar stage3..
 
-> $mount /dev/sdc2 /mnt/rpi 
+> $mount /dev/sdc2 /mnt/rpi  
 > $tar -xpf stage3-xxx -C /mnt/rpi 
 
 Fixup /mnt/rpi/etc/fstab
@@ -113,7 +113,7 @@ Get portage-latest.tar.bz2
 
     $tar xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
 
-    $mkdir /mnt/rpi/etc/portage/repos.conf
+    $mkdir /mnt/rpi/etc/portage/repos.conf  
     $cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
 
 Add following to make.conf::
