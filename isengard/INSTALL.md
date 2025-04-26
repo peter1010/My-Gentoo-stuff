@@ -1,25 +1,25 @@
 # On a host PC
 
-For Raspberry PI, we use MBR boot sector (to be backwards compatible)::
+For Raspberry PI, we use MBR boot sector (to be backwards compatible).
 
-    $sudo fdisk /dev/sdc
+> $sudo fdisk /dev/sdc
 
-Delete all paritions with the 'd' command
+Delete all paritions with the 'd' command.
 
-we use vfat for boot parition and want to end on a 4M boundary so::
+As we use vfat for boot parition and want to end on a 4M boundary so.
 
     n -> p -> 1 -> <ret> -> +199M
     n -> p -> 2 -> <ret> -> <ret>
 
 Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
 integer, note the integer part of the answer and multiply back to the 
-sector count, delete partition and recreate with new last sector
+sector count, delete partition and recreate with new last sector.
 
-Set parition 1 as boot::
+Set parition 1 as boot
 
     a -> 1
 
-Set parition types::
+Set parition types
 
     t -> 1 -> c
     t -> 2 -> 83
