@@ -138,10 +138,10 @@ Source will end up in /usr/src/linux-xxx-yyy-zzz
 so perhaps make a symbolic link to a generic folder linux-rpi
 
 > cd /usr/src/linux-rpi
-> make ARCH=arm bcm2709_defconfig
-    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig
-    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1
-    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/rpi/'
+> make ARCH=arm64 bcm2711_defconfig  
+> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig  
+> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1  
+> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/rpi/'  
     
 Check /mnt/rpi/lib/modules/ contains the modules
 
