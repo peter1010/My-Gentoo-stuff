@@ -155,29 +155,41 @@ Mount the boot partition and copy across the kernel::
 
 Set root ready for startup - temp set up for DNS
 
-    $cp /etc/resolv.conf /mnt/rpi/etc/resolv.conf
+> cp /etc/resolv.conf /mnt/rpi/etc/resolv.conf
 
+Set up hostname
 
-
-Set up hostname::
-
-    $vi /mnt/rpi/etc/hostname
-
-  and/or
-
-    $vi /mnt/rpi/etc/conf.d/hostname
+> vi /mnt/rpi/etc/conf.d/hostname
 
 Set up domainname & network::
 
-    $ln -s net.lo /etc/init.d/net.eth0
+> cd /mnt/rpi/etc/init.d  
+> ln -s net.lo net.eth0
 
-    $vi /mnt/rpi/etc/conf.d/net
+> vi /mnt/rpi/etc/conf.d/net
 
-    dns_domain_lo="home.arpa"
     config_eth0="192.168.11.11/24"
-    routes_eth0="default via 192.168.11.2"
-    dns_servers_eth0="192.168.11.10"
 
+    routes_eth0="default via 192.168.11.5
+    217.169.20.20/31 via 192.168.11.5
+    185.214.220.7/32 via 192.168.11.3
+    185.130.156.7/32 via 192.168.11.3"
+
+    dns_servers_eth0="192.168.11.11"
+    dns_search_eth0="home.arpa"
+
+    \# set IPv6 interface token
+    preup() {
+        ip token set ::11 dev eth0
+        return 0
+    }
+
+    \# optional: assign the token ::11 address to fe80:
+    postup() {
+        ip addr flush scope link dev eth0
+        ip addr add fe80::11/64 dev eth0
+        return 0
+    }
 
 Set up locale::
 
