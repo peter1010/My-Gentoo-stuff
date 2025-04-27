@@ -161,7 +161,7 @@ Set up hostname
 
 > vi /mnt/rpi/etc/conf.d/hostname
 
-Set up domainname & network::
+Set up domainname & network
 
 > cd /mnt/rpi/etc/init.d  
 > ln -s net.lo net.eth0
@@ -191,26 +191,29 @@ Set up domainname & network::
         return 0
     }
 
-Set up locale::
+Set up locale
 
-    $ln -sf /usr/share/zoneinfo/Europe/London /mnt/rpi/etc/localtime
-    $echo "Europe/London" > /mnt/rpi/etc/timezone
+> ln -sf /usr/share/zoneinfo/Europe/London /mnt/rpi/etc/localtime  
+> echo "Europe/London" > /mnt/rpi/etc/timezone
 
-set up keymaps::
+set up keymaps
 
-    $vi /mnt/rpi/etc/conf.d/keymaps
+> vi /mnt/rpi/etc/conf.d/keymaps
 
     keymap="uk"
 
-clear root password::
+clear root password
 
-    $sed -i 's/^root:.*/root::::::::/' /mnt/rpi/etc/shadow 
+> sed -i 's/^root:.*/root::::::::/' /mnt/rpi/etc/shadow 
 
+Edit local.gen
 
-Edit local.gen::
+> vi /mnt/rpi/etc/locale.gen
 
-    $vi /mnt/rpi/etc/locale.gen
-
+    en_US ISO-8859-1
+    en_US.UTF-8 UTF-8
+    en_GB ISO-8859-1
+    en_GB.UTF-8 UTF-8
 
 umount sd card..
 
