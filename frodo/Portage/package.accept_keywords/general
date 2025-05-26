@@ -3,6 +3,7 @@
 # ** — Package is always visible (KEYWORDS are ignored completely).
 
 app-misc/khal ~*
+sys-boot/raspberrypi-firmware *
 sys-kernel/raspberrypi-sources **
 dev-python/aiohttp-oauthlib ~*
 dev-python/aiostream ~*
