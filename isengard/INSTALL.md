@@ -234,7 +234,11 @@ Set time
 Create users
 
 > useradd -m -g users -G wheel peter  
-> passwd peter  
+> passwd peter
+
+Fix the network interface names by creating a /etc/udev/rules.d/99_my.rules
+
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
 Enable sshd if need to do the rest remotely
 
