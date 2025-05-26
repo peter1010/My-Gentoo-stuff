@@ -221,15 +221,15 @@ umount sd card..
 
 Fix keymaps, update local
 
-> rc-update add keymaps boot
-> rc-service keymaps restart
-> locale-gen
+> rc-update add keymaps boot 
+> rc-service keymaps restart 
+> locale-gen 
 
 Set time
 
-> date MMDDhhmmYYYY
-> rc-update add swclock boot
-> rc-update del hwclock boot
+> date MMDDhhmmYYYY 
+> rc-update add swclock boot 
+> rc-update del hwclock boot 
 
 Create users
 
