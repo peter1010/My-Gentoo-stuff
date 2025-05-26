@@ -240,6 +240,10 @@ Fix the network interface names by creating a /etc/udev/rules.d/99_my.rules
 
     SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
+Add the startup for the network
+
+> rc-update add net.eth0 boot
+
 Enable sshd if need to do the rest remotely
 
 > rc-update add sshd  
