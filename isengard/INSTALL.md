@@ -221,36 +221,47 @@ umount sd card..
 
 Fix keymaps, update local
 
-> rc-update add keymaps boot 
-> rc-service keymaps restart 
-> locale-gen 
+> rc-update add keymaps boot  
+> rc-service keymaps restart  
+> locale-gen  
 
 Set time
 
-> date MMDDhhmmYYYY 
-> rc-update add swclock boot 
-> rc-update del hwclock boot 
+> date MMDDhhmmYYYY  
+> rc-update add swclock boot  
+> rc-update del hwclock boot  
 
 Create users
 
-    $useradd -m -g users -G wheel peter
-    $passwd peter
+> useradd -m -g users -G wheel peter  
+> passwd peter  
 
 Enable sshd if need to do the rest remotely
 
-    $rc-update add sshd
-    $rc-service sshd start
+> rc-update add sshd  
+> rc-service sshd start  
 
 Sync portage
 
-    $emerge-webrsync
+> emerge-webrsync  
 
-    $eselect profile list
-    $eselect locale list
+> eselect profile list  
+> eselect locale list  
 
-Setup portage use flags::
+Setup portage use flags
 
     copy from my github the general uses file
+
+Setup console fonts.
+
+> emerge media-fonts/terminus-font
+
+Edit /etc/conf.d/consolefonts and add
+
+    consolefont="ter-v32n"
+
+> rc-update add consolefont boot
+
 
 emerge "base" packages I like::
 
