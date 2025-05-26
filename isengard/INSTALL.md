@@ -219,40 +219,29 @@ umount sd card..
 
 ------------------ insert sd card into rp and boot ------------------
 
-Fix keymaps, update local::
+Fix keymaps, update local
 
-    $rc-update add keymaps boot
-    $rc-service keymaps restart
-    $locale-gen
+> rc-update add keymaps boot
+> rc-service keymaps restart
+> locale-gen
 
-No network of dhcp so use ifconfig and iproute::
+Set time
 
-    Add udev rule to make network interface name be eth0
+> date MMDDhhmmYYYY
+> rc-update add swclock boot
+> rc-update del hwclock boot
 
-    $ifconfig eth0 192.168.11.99/24
-    $route add default gw 192.168.11.2
-
-    emerge netifrc
-    rc-update add net.eth0
-
-Set time::
-
-    $date MMDDhhmmYYYY
-    $rc-update add swclock boot
-    $rc-update del hwclock boot
-
-Create users::
+Create users
 
     $useradd -m -g users -G wheel peter
     $passwd peter
 
-Enable sshd if need to do the rest remotely::
+Enable sshd if need to do the rest remotely
 
     $rc-update add sshd
     $rc-service sshd start
 
-
-Sync portage::
+Sync portage
 
     $emerge-webrsync
 
