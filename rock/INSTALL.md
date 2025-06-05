@@ -1,12 +1,10 @@
-====================
-On a host PC
-====================
+# On a host PC
 
 Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine
 
-For RockPo64, we use GPT and a EFI partition::
+For RockPo64, we use GPT and a EFI partition
 
-    $sudo fdisk /dev/sdc
+> sudo fdisk /dev/sdc
 
 Delete all paritions with the 'd' command
 
@@ -26,41 +24,41 @@ Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
 integer, note the integer part of the answer and multiply back to the 
 sector count, delete partition and recreate with new last sector
 
-
-Set parition types::
+Set parition types
 
     t -> 1 -> 1
     t -> 2 -> 20
 
 Example:
 
-Device        Start      End  Sectors  Size Type
-/dev/sdc1     32768   409599   407552  199M EFI System
-/dev/sdc2    409600 62332927 61923328 29.5G Linux filesystem
+| Device    | Start  |    End   | Sectors  | Size  | Type             |
+|-----------|--------|----------|----------|-------|------------------|
+| /dev/sdc1 |  32768 |   409599 |   407552 |  199M |       EFI System |
+| /dev/sdc2 | 409600 | 62332927 | 61923328 | 29.5G | Linux filesystem |
 
 
-create filesystems for each::
+create filesystems for each
 
-    $mkfs.vfat -n BOOT /dev/sdc1
-    $mkfs.ext4 -L ROOT /dev/sdc2
+> mkfs.vfat -n BOOT /dev/sdc1
+> mkfs.ext4 -L ROOT /dev/sdc2
 
 Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.bz2
-Mount sd card root parition and untar stage3..::
+Mount sd card root parition and untar stage3..
 
-    $mount /dev/sdc2 /mnt/root
-    $tar -xpf stage3-xxx -C /mnt/root
+> mount /dev/sdc2 /mnt/root
+> tar -xpf stage3-xxx -C /mnt/root
 
-Fixup /mnt/root/etc/fstab::
+Fixup /mnt/root/etc/fstab
 
-/dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2
-/dev/mmcblk0p2          /               ext4            noatime         0 1
+  /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
+  /dev/mmcblk0p2          /               ext4            noatime         0 1
 
-Get portage-latest.tar.bz2::
+Get portage-latest.tar.bz2
 
-    $tar xpf portage-latest.tar.bz2 -C /mnt/root/usr
+> tar xpf portage-latest.tar.bz2 -C /mnt/root/usr
 
-    $mkdir /mnt/root/etc/portage/repos.conf
-    $cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf
+> mkdir /mnt/root/etc/portage/repos.conf
+> cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf
 
 
 create & chroot to gentoo environment on PC (if not already using Gentoo)
