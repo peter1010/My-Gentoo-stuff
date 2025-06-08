@@ -1,5 +1,7 @@
 # On a host PC
 
+Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine.
+
 For Raspberry PI, we use MBR boot sector (to be backwards compatible).
 
 > sudo fdisk /dev/sdc
@@ -8,21 +10,24 @@ Delete all paritions with the 'd' command.
 
 As we use vfat for boot parition and want to end on a 4M boundary so.
 
-    n -> p -> 1 -> <ret> -> +199M
-    n -> p -> 2 -> <ret> -> <ret>
+> n -> p -> 1 -> <ret> -> +199M
+
+Then the root partition.
+
+> n -> p -> 2 -> <ret> -> <ret>
 
 Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
 integer, note the integer part of the answer and multiply back to the 
 sector count, delete partition and recreate with new last sector.
 
-Set parition 1 as boot
+Set partition 1 as boot:
 
-    a -> 1
+> a -> 1
 
-Set parition types
+Set parition types like so:
 
-    t -> 1 -> c
-    t -> 2 -> 83
+> t -> 1 -> c
+> t -> 2 -> 83
 
 Example:
 
@@ -35,18 +40,36 @@ Check the boundaries
 
 409600 / (2 * 1024 * 4) = 50
 
-Create filesystems for each.
+Create filesystems for each like so:
 
-> mkfs.vfat -n BOOT /dev/sdc1  
-> mkfs.ext4 -L ROOT /dev/sdc2  
+> mkfs.vfat -n BOOT /dev/sdc1
+> mkfs.ext4 -L ROOT /dev/sdc2
+
+Download stage3-amd64-openrx-xxx.tar.xz from gentoo.
+
+Mount sd card root partition and untar stage3.
+
+> mkdir /mnt/root
+> mount /dev/sdc2 /mnt/root
+> tar -xpf stage3-xxx -C /mnt/root
+
+Fixup /mnt/root/etc/fstab
+
+  /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
+  /dev/mmcblk0p2          /               ext4            noatime         0 1
+
+Get portage-latest.tar.bz2
+
+> tar -xpf portage-latest.tar.bz2 -C /mnt/root/usr
+
+> mkdir /mnt/root/etc/portage/repos.conf
+> cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf
+
 
 Create & chroot to gentoo environment on PC (if not already using Gentoo)
 
 Hint for non-gentoo native PC
 
-    Download stage3-amd64-openrx-xxx.tar.xz from gentoo
-    create /mnt/gentoo
-    unzip stage3 into /mnt/gentoo
 
 > cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf 
 
@@ -87,17 +110,7 @@ Edit /boot/config.txt
 
 > umount /boot
 
-Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.zx" from https://distfiles.gentoo.org/releases/
 
-Mount sd card root parition and untar stage3..
-
-> mount /dev/sdc2 /mnt/rpi  
-> tar -xpf stage3-xxx -C /mnt/rpi 
-
-Fixup /mnt/rpi/etc/fstab
-
-    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2
-    /dev/mmcblk0p2          /               ext4            noatime         0 1     
 
 Adjust portage/make.conf
 
@@ -108,13 +121,6 @@ Adjust portage/make.conf
     CXXFLAGS="${COMMON_FLAGS}"
     FCFLAGS="${COMMON_FLAGS}"
     FFLAGS="${COMMON_FLAGS}"
-
-Get portage-latest.tar.bz2
-
-> tar -xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
-
-> mkdir /mnt/rpi/etc/portage/repos.conf  
-> cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
 
 Add following to make.conf
 

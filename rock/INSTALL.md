@@ -24,6 +24,10 @@ Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
 integer, note the integer part of the answer and multiply back to the 
 sector count, delete partition and recreate with new last sector.
 
+Set partition 1 as boot:
+
+> a -> 1
+
 Set parition types like so:
 
 > t -> 1 -> 1  
@@ -42,9 +46,11 @@ Create filesystems for each like so:
 > mkfs.vfat -n BOOT /dev/sdc1
 > mkfs.ext4 -L ROOT /dev/sdc2
 
-Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.bz2.
-Mount sd card root parition and untar stage3.
+Download stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.bz2 from gentoo website.
 
+Mount sd card root partition and untar stage3.
+
+> mkdir /mnt/root
 > mount /dev/sdc2 /mnt/root
 > tar -xpf stage3-xxx -C /mnt/root
 
