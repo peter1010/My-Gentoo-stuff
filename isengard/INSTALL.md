@@ -8,19 +8,18 @@ For Raspberry PI, we use MBR boot sector (to be backwards compatible).
 
 > sudo fdisk /dev/sdc
 
-Delete all paritions with the 'd' command.
+Delete all partitions with the 'd' command.
 
-As we use vfat for boot parition and want to end on a 4M boundary so.
+As we use vfat for boot partition and want to end on a 4M boundary so.
 
-> n -> p -> 1 -> <ret> -> +199M
+> n -> p -> 1 -> \<ret> -> +199M
 
 Then the root partition.
 
-> n -> p -> 2 -> <ret> -> <ret>
+> n -> p -> 2 -> \<ret> -> \<ret>
 
-Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
-integer, note the integer part of the answer and multiply back to the 
-sector count, delete partition and recreate with new last sector.
+Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole integer, note the integer part of the answer and 
+multiply back to the sector count, delete partition and recreate with new last sector.
 
 Set partition 1 as boot:
 
@@ -34,7 +33,7 @@ Set partition types like so:
 Example:
 
 | Device    | Start    | End      | Sectors  | Size  | Type          |
-| --------- |--------- | -------- | -------- | ----- | ------------- |
+|-----------|----------|----------|----------|-------|---------------|
 | /dev/sdc1 |     2048 |   409599 |   407552 |  199M |  c W95 FAT32  |
 | /dev/sdc2 |   409600 | 60645375 | 61924352 | 29.5G | 83 Linux      |
 
@@ -53,28 +52,40 @@ Download stage3-arm64-openrx-xxx.tar.xz from gentoo.
 
 Mount sd card root partition and untar stage3.
 
-> mkdir /mnt/root  
-> mount /dev/sdc2 /mnt/root  
-> tar -xpf stage3-xxx -C /mnt/root  
+> mkdir /mnt/rpi  
+> mount /dev/sdc2 /mnt/rpi  
+> tar -xpf stage3-xxx -C /mnt/rpi  
 
-Fixup /mnt/root/etc/fstab
+Fixup /mnt/rpi/etc/fstab
 
-  /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
-  /dev/mmcblk0p2          /               ext4            noatime         0 1
+    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
+    /dev/mmcblk0p2          /               ext4            noatime         0 1
 
 Get portage-latest.tar.bz2
 
-> tar -xpf portage-latest.tar.bz2 -C /mnt/root/usr
+> wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2  
+> tar -xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
 
-> mkdir /mnt/root/etc/portage/repos.conf
-> cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf
+> mkdir /mnt/rpi/etc/portage/repos.conf  
+> cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
+
+## Put RPI firmware into the boot partition
+
+Mount the boot partition in the hosts /boot mount point...
+
+> mount /dev/sdc1 /boot
+
+Triple check you have mounted the right /boot as you don't want to distroy the host's boot! 
+
+> emerge --ask sys-boot/raspberrypi-firmware
+> unmout /boot
+
 
 ## Build the kernel
 
-
 Create & chroot to gentoo environment on PC (if not already using Gentoo)
 
-See NON_GENTOO_PC.md for setting up Gentoo build env
+See NON\_GENTOO\_PC.md for setting up Gentoo build env
 
 If not already done, install cross compiler;
 
@@ -83,40 +94,42 @@ If not already done, install cross compiler;
 > eselect repository create crossdev  
 > crossdev -S -t aarch64-unknown-linux-gnu  
 
-Build the kernel with the cross-compiler
+Get the linux source files:
 
 > emerge sys-kernel/raspberrypi-sources
 
-Source will end up in /usr/src/linux-xxx-yyy-zzz
-so perhaps make a symbolic link to a generic folder linux-rpi
+Source will end up in /usr/src/linux-xxx-yyy-zzz so perhaps make a symbolic link to a generic folder linux-rpi.
 
 > cd /usr/src/linux-rpi
 
 Get the config from https://github.com/peter1010/My-Gentoo-Stuff/isengard/Kernel/build
 
-> make ARCH=arm64 bcm2711_defconfig  
-> scripts/kconfig/merge_config.sh /xxx/my_rp4i_defconfig
+> make ARCH=arm64 bcm2711\_defconfig  
+> scripts/kconfig/merge\_config.sh /xxx/my\_rp4i\_defconfig
 
-> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig  
-> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1  
-> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/root/  
-    
-Check /mnt/root/lib/modules/ contains the modules.
+Build the kernel with the cross-compiler:
 
-Mount the boot partition and copy across the kernel.
+> make ARCH=arm64 CROSS\_COMPILE=aarch64-unknown-linux-gnu- oldconfig  
+> make ARCH=arm64 CROSS\_COMPILE=aarch64-unknown-linux-gnu- -j1  
+> make ARCH=arm64 CROSS\_COMPILE=aarch64-unknown-linux-gnu- modules\_install INSTALL\_MOD\_PATH=/mnt/rpi/  
 
-> mount /dev/sdc1 /boot
+Check /mnt/rpi/lib/modules/ contains the modules.
 
-Triple check you have mounted the right /boot as you don't want to distroy the host 
+Mount the boot partition, again, but this time somewhere safer that before.
 
-> emerge --ask sys-boot/raspberrypi-firmware
+> mount /dev/sdc1 /mnt/rpi/boot  
+> cp arch/arm64/boot/Image /mnt/rpi/boot/kernel8.img  
+> cp arch/arm64/boot/broadcom/dts/\*.dtb /mnt/rpi/boot/  
+> mkdir /mnt/rpi/boot/overlays  
+> cp arch/arm64/boot/dts/overlays/\* /mnt/rpi/boot/overlays
 
-Edit /boot/cmdline.txt (ls -al will find a saved version)
+
+Edit /mnt/rpi/boot/cmdline.txt (ls -al will find a saved version)
 
     Add audit=0 selinux=0
     change root=/dev/mmcblk0p2
 
-Edit /boot/config.txt
+Edit /mnt/rpi/boot/config.txt
 
     dtparam=audio=off
     dtoverlay=vc4-fkms-v3d
@@ -126,38 +139,27 @@ Edit /boot/config.txt
     dtoverlay=disable-wifi
 
 
-> umount /boot
+## Tweaks ready to boot nicely
+
+At this point one could umount the sd-card and boot the Raspberry pi. Or for convenience continue with the mounted SD-CARD. Assumming the latter.
 
 
+Adjust /mnt/rpi/etc/portage/make.conf
 
-Adjust portage/make.conf
 
-# Raspberry Pi 4 running:
+    COMMON_FLAGS="-O2 -mcpu=cortex-a72 -ftree-vectorize -fomit-frame-pointer"  
+    CFLAGS="${COMMON_FLAGS}"  
+    CXXFLAGS="${COMMON_FLAGS}"  
+    FCFLAGS="${COMMON_FLAGS}"  
+    FFLAGS="${COMMON_FLAGS}"  
 
-    COMMON_FLAGS="-O2 -mcpu=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
-    CFLAGS="${COMMON_FLAGS}"
-    CXXFLAGS="${COMMON_FLAGS}"
-    FCFLAGS="${COMMON_FLAGS}"
-    FFLAGS="${COMMON_FLAGS}"
+    BINPKG_FORMAT="gpkg"  
+    FEATURES="buildpkg"  
+    MAKEOPTS="-j1"  
+    LINGUAS="en_GB en fr"  
+    L10N="en-GB en fr"  
+    EMERGE_DEFAULT_OPTS="--jobs=1 --ask"  
 
-Add following to make.conf
-
-    BINPKG_FORMAT="gpkg"
-    FEATURES="buildpkg"
-    MAKEOPTS="-j1"
-    LINGUAS="en_GB en fr"
-    L10N="en-GB en fr"
-    EMERGE_DEFAULT_OPTS="--jobs=1 --ask"
-
-Mount the boot partition and copy across the kernel::
-
-> mount /dev/sdc1 /mnt/rpi/boot  
-> cp arch/arm64/boot/Image /mnt/rpi/boot/kernel8.img  
-> cp arch/arm64/boot/broadcom/dts/\*.dtb /mnt/rpi/boot/  
-> mkdir /mnt/rpi/boot/overlays  
-> cp arch/arm64/boot/dts/overlays/\* /mnt/rpi/boot/overlays/  
-
-Set root ready for startup - temp set up for DNS
 
 > cp /etc/resolv.conf /mnt/rpi/etc/resolv.conf
 
@@ -214,14 +216,16 @@ Edit local.gen
 
 > vi /mnt/rpi/etc/locale.gen
 
-    en_US ISO-8859-1
-    en_US.UTF-8 UTF-8
-    en_GB ISO-8859-1
-    en_GB.UTF-8 UTF-8
+    en\_US ISO-8859-1
+    en\_US.UTF-8 UTF-8
+    en\_GB ISO-8859-1
+    en\_GB.UTF-8 UTF-8
 
 umount sd card..
 
 ------------------ insert sd card into rp and boot ------------------
+
+# Raspberry Pi 4 running:
 
 Fix keymaps, update local
 
@@ -240,7 +244,7 @@ Create users
 > useradd -m -g users -G wheel peter  
 > passwd peter
 
-Fix the network interface names by creating a /etc/udev/rules.d/99_my.rules
+Fix the network interface names by creating a /etc/udev/rules.d/99\_my.rules
 
     SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
@@ -252,6 +256,8 @@ Enable sshd if need to do the rest remotely
 
 > rc-update add sshd  
 > rc-service sshd start  
+
+# SSH running so remote login is possible:
 
 Sync portage
 
@@ -277,15 +283,16 @@ Edit /etc/conf.d/consolefonts and add
 
 emerge "base" packages I like::
 
-    $emerge --ask app-misc/screen
-    $emerge --ask app-portage/gentoolkit
-    $emerge --ask app-editors/vim
-    $emerge --ask dev-vcs/git
-    $emerge --ask app-admin/sudo
-    $emerge --ask net-misc/chrony
-    $emerge --ask rsyslog
-    $emerge --ask dcron
-    $emerge --ask logrotate
+> emerge app-misc/screen
+> emerge app-portage/gentoolkit
+> emerge app-editors/vim
+> emerge dev-vcs/git
+> emerge app-admin/sudo
+> emerge net-misc/chrony
+> emerge rsyslog
+> emerge dcron
+
+> emerge logrotate
 
     $rc-update add chronyd
     $rc-service chronyd start

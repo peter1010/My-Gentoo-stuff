@@ -2,30 +2,37 @@
 
 Format the HD like so..
 
-### Disklabel type: gpt
+## Format Boot/Storage Medium
 
-| Device    | Start    | End       |   Sectors |   Size | Type             |
-| --------- | -------- | --------- | --------- | ------ | ---------------- |
+For MacBook we use  gpt
+
+> sudo fdisk /dev/sda
+
+Example:
+
+| Device    | Start    | End       | Sectors   |   Size | Type             |
+|-----------|----------|-----------|-----------|--------| ---------------- |
 | /dev/sda1 |     2048 |    526335 |    524288 |   256M | EFI System       |
 | /dev/sda2 |   526336 |  34080767 |  33554432 |    16G | Linux swap       |
 | /dev/sda3 | 34080768 | 977105026 | 943024259 | 449.7G | Linux filesystem |
 
-### create filesystems for each
+Create filesystems for each like so:
 
-> $mkfs.vfat -n BOOT /dev/sda1<br>
-> $mkfs.ext4 -L ROOT /dev/sda2<br>
-> $mkswap -L SWAP /dev/sda3<br>
+> mkfs.vfat -n BOOT /dev/sda1  
+> mkfs.ext4 -L ROOT /dev/sda2  
+> mkswap -L SWAP /dev/sda3  
 
-create & chroot to gentoo environment on PC (if not already using Gentoo)
+## Install Stage 3 root partition
 
-From https://www.gentoo.org/downloads/
+Download stage3 stage3-amd64-openrc-xxx.tar.xz from Gentoo.
 
-Get stage3 stage3-amd64-openrc-xxx.tar.xz
 
-### Mount root parition and untar stage3..
 
-> $mount /dev/sda3 /mnt/root<br>
-> $tar -xpf stage3-xxx -C /mnt/root<br>
+
+Mount root partition and untar stage3..
+
+> mount /dev/sda3 /mnt/root  
+> tar -xpf stage3-xxx -C /mnt/root  
 
 Fixup /mnt/root/etc/fstab
 
@@ -33,15 +40,18 @@ Fixup /mnt/root/etc/fstab
     /dev/sda2          none            swap            sw              0 0
     /dev/sda3          /               ext4            noatime         0 1
 
-### Get portage-latest.tar.bz2
+Get portage-latest.tar.bz2
 
-> $wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2<br>
-> $tar xpf portage-latest.tar.bz2 -C /mnt/root/usr<br>
->
-> $mkdir /mnt/root/etc/portage/repos.conf<br>
-> $cp /mnt/root/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf<br>
+> wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2  
+> tar xpf portage-latest.tar.bz2 -C /mnt/root/usr  
+
+> mkdir /mnt/root/etc/portage/repos.conf  
+> cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf<br>
+
+create & chroot to gentoo environment on PC (if not already using Gentoo)
 
 ### Adjust portage/make.conf
+
 
 Add following to make.conf
 

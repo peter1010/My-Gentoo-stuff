@@ -8,30 +8,28 @@ For Raspberry PI, we use MBR boot sector (to be backwards compatible).
 
 > sudo fdisk /dev/sdc
 
-Delete all paritions with the 'd' command.
+Delete all partitions with the 'd' command.
 
-As we use vfat for boot parition and want to end on a 4M boundary so.
+As we use vfat for boot partition and want to end on a 4M boundary so.
 
-> n -> p -> 1 -> <ret> -> +199M
+> n -> p -> 1 -> \<ret> -> +199M
 
-We need a swap parition  2x RAM  so subract 1 or 2G from root partition::
+We need a swap parition  2x RAM  so subract 1 or 2G from root partition
 
-> n -> p -> 2 -> <ret> -> -1G
+> n -> p -> 2 -> \<ret> -> -1G
 
-Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
-integer, note the integer part of the answer and multiply back to the 
-sector count, delete partition and recreate with new last sector.
+Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole integer, note the integer part of the answer and
+multiply back to the sector count, delete partition and recreate with new last sector.
 
-Finally.
+Finally
 
-> n -> p -> 3 -> <ret> -> <ret>
+> n -> p -> 3 -> \<ret> -> \<ret>
 
 Set partition 1 as boot:
 
 > a -> 1
 
 Set partition types like so:
-
 
 > t -> 1 -> c  
 > t -> 2 -> 83  
@@ -41,7 +39,7 @@ Example:
 
 | Device    | Start    | End      | Sectors  | Size  | Type          |
 |-----------|----------|----------|----------|-------|---------------|
-| /dev/sdc1 |     2048 |   409599 |  407552  | 199M  | c W95 FAT32   |
+| /dev/sdc1 |     2048 |   409599 |   407552 |  199M |  c W95 FAT32  |
 | /dev/sdc2 |   409600 | 60645375 | 60235776 | 28.7G | 83 Linux      |
 | /dev/sdc3 | 60645376 | 62748671 |  2103296 |    1G | 82 Linux swap |
 
@@ -59,33 +57,43 @@ Create filesystems for each like so:
 
 ## Install Stage 3 root partition
 
-Download stage3 for the Arm7 "stage3-arm7a_hardfp-xxx.tar.xz
+Download stage3 for the Arm7 "stage3-arm7a\_hardfp-xxx.tar.xz
 
 Mount sd card root partition and untar stage3.
 
-> mkdir /mnt/root  
-> mount /dev/sdc2 /mnt/root
-> tar -xpf stage3-xxx -C /mnt/root
+> mkdir /mnt/rpi  
+> mount /dev/sdc2 /mnt/rpi  
+> tar -xpf stage3-xxx -C /mnt/rpi  
 
-Fixup /mnt/root/etc/fstab
+Fixup /mnt/rpi/etc/fstab
 
-  /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
-  /dev/mmcblk0p2          /               ext4            noatime         0 1     
-  /dev/mmcblk0p3          none            swap            sw              0 0
+    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
+    /dev/mmcblk0p2          /               ext4            noatime         0 1     
+    /dev/mmcblk0p3          none            swap            sw              0 0
 
 Get portage-latest.tar.bz2
 
-> tar xpf portage-latest.tar.bz2 -C /mnt/root/usr
+> tar -xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
 
-> mkdir /mnt/root/etc/portage/repos.conf
-> cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf
+> mkdir /mnt/rpi/etc/portage/repos.conf  
+> cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
+
+## Put RPI firmware into the boot partition
+
+Mount the boot partition in the hosts /boot mount point...
+
+> mount /dev/sdc1 /boot
+
+Triple check you have mounted the right /boot as you don't want to distroy the host's boot! 
+
+> emerge --ask sys-boot/raspberrypi-firmware
+> unmout /boot
 
 ## Build the kernel
 
-
 Create & chroot to gentoo environment on PC (if not already using Gentoo)
 
-See NON_GENTOO_PC.md for setting up Gentoo build env
+See NON\_GENTOO\_PC.md for setting up Gentoo build env
 
 If not already done, install cross compiler;
 
@@ -94,40 +102,42 @@ If not already done, install cross compiler;
 > eselect repository create crossdev  
 > crossdev -S -t armv7a-unknown-linux-gnueabihf
 
-Build the kernel with the cross-compiler
+Get the linux sources files:
 
 > emerge sys-kernel/raspberrypi-sources
 
-Source will end up in /usr/src/linux-xxx-yyy-zzz
-so perhaps make a symbolic link to a generic folder linux-rpi
+Source will end up in /usr/src/linux-xxx-yyy-zzz so perhaps make a symbolic link to a generic folder linux-rpi
 
 > cd /usr/src/linux-rpi
 
 Get the config from https://github.com/peter1010/My-Gentoo-Stuff/gandalf/Kernel/build
 
-> make ARCH=arm bcm2709_defconfig  
-> scripts/kconfig/merge_config.sh /xxx/my_rpi3_defconfig
+> make ARCH=arm bcm2709\_defconfig  
+> scripts/kconfig/merge\_config.sh /xxx/my\_rpi3\_defconfig
 
-> make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- oldconfig  
-> make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- -j1  
-> make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- modules_install INSTALL_MOD_PATH=/mnt/root/
+Build the kernel with the cross-compiler:
 
-Check /mnt/root/lib/modules/ contains the modules.
+> make ARCH=arm CROSS\_COMPILE=armv7a-unknown-linux-gnueabihf- oldconfig  
+> make ARCH=arm CROSS\_COMPILE=armv7a-unknown-linux-gnueabihf- -j1  
+> make ARCH=arm CROSS\_COMPILE=armv7a-unknown-linux-gnueabihf- modules\_install INSTALL\_MOD\_PATH=/mnt/rpi/  
 
-Mount the boot partition and copy across the kernel.
+Check /mnt/rpi/lib/modules/ contains the modules.
+
+Mount the boot partition, again, but this time somewhere safer that before.
+
+> mount /dev/sdc1 /mnt/rpi/boot  
+> cp arch/arm/boot/Image /mnt/rpi/boot/kernel.img  
+> cp arch/arm/boot/dts/\*.dtb /mnt/rpi/boot/  
+> mkdir /mnt/rpi/boot/overlays  
+> cp arch/arm/boot/dts/overlays/\* /mnt/rpi/boot/overlays/
 
 
-Mount SD boot parition::
-
-    $mount /dev/sdc1 /boot
-    $emerge --ask sys-boot/raspberrypi-firmware
-
-Edit /boot/cmdline.txt (ls -al will find a saved version)::
+Edit /mnt/rpi/boot/cmdline.txt (ls -al will find a saved version)
 
     Add audit=0 selinux=0
     change root=/dev/mmcblk0p2
 
-Edit /boot/config.txt::
+Edit /mnt/rpi/boot/config.txt
 
     dtparam=audio=off
     dtoverlay=vc4-kms-v3d
@@ -135,144 +145,153 @@ Edit /boot/config.txt::
     dtoverlay=disable-bt
     dtoverlay=disable-wifi
 
+## Tweaks ready to boot nicely
 
-    $umount /boot
-
-Adjust  portage/make.conf::
-
-# Raspberry Pi 3 running in 32 bit mode:
-
-COMMON_FLAGS="-O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
-CFLAGS="${COMMON_FLAGS}"
-CXXFLAGS="${COMMON_FLAGS}"
-FCFLAGS="${COMMON_FLAGS}"
-FFLAGS="${COMMON_FLAGS}"
+At this point one could umount the sd-card and boot the Raspberry pi. Or for convenience continue with the mounted SD-CARD. Assumming the latter.
 
 
-Add following to make.conf::
-
-    BINPKG_FORMAT="gpkg"
-    FEATURES="buildpkg"
-    MAKEOPTS="-j1"
-    LINGUAS="en_GB"
-    L10N="en-GB"
+Adjust /mnt/rpi/etc/portage/make.conf
 
 
+    COMMON_FLAGS="-O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"  
+    CFLAGS="${COMMON_FLAGS}"  
+    CXXFLAGS="${COMMON_FLAGS}"  
+    FCFLAGS="${COMMON_FLAGS}"  
+    FFLAGS="${COMMON_FLAGS}"  
+
+    BINPKG_FORMAT="gpkg"  
+    FEATURES="buildpkg"  
+    MAKEOPTS="-j1"  
+    LINGUAS="en_GB"  
+    L10N="en-GB"  
 
 
-    $mount /dev/sdc1 /mnt/rpi/boot
-    $cp arch/arm/boot/Image /mnt/rpi/boot/kernel.img
-    $cp arch/arm/boot/dts/*.dtb /mnt/rpi/boot/
-    $mkdir /mnt/rpi/boot/overlays
-    $cp arch/arm/boot/dts/overlays/* /mnt/rpi/boot/overlays/ 
+> cp /etc/resolv.conf /mnt/rpi/etc/resolv.conf
 
-Set root ready for startup - temp set up for DNS::
+Set up hostname
 
-    $cp /etc/resolv.conf /mnt/rpi/etc/resolv.conf
+> vi /mnt/rpi/etc/hostname
 
+and/or
 
+> vi /mnt/rpi/etc/conf.d/hostname
 
-Set up hostname::
+Set up domainname & network
 
-    $vi /mnt/rpi/etc/hostname
+> cd /mnt/rpi/etc/init.d  
+> ln -s net.lo net.eth0
 
-  and/or
-
-    $vi /mnt/rpi/etc/conf.d/hostname
-
-Set up domainname & network::
-
-    $ln -s net.lo /etc/init.d/net.eth0
-
-    $vi /mnt/rpi/etc/conf.d/net
+> vi /mnt/rpi/etc/conf.d/net
 
 
-    dns_domain_lo="home.arpa"
     config_eth0="192.168.11.10/24"
+
     routes_eth0="default via 192.168.11.2"
+
     dns_servers_eth0="192.168.11.10"
+    dns_domain_lo="home.arpa"
 
+    \# set IPv6 interface token
+    preup() {
+        ip token set ::10 dev eth0
+        return 0
+    }
 
-Set up locale::
+    \# optional: assign the token ::10 address to fe80:
+    postup() {
+        ip addr flush scope link dev eth0
+        ip addr add fe80::10/64 dev eth0
+        return 0
+    }
 
-    $ln -sf /usr/share/zoneinfo/Europe/London /mnt/rpi/etc/localtime
-    $echo "Europe/London" > /mnt/rpi/etc/timezone
+Set up locale
 
-set up keymaps::
+> ln -sf /usr/share/zoneinfo/Europe/London /mnt/rpi/etc/localtime  
+> echo "Europe/London" > /mnt/rpi/etc/timezone
 
-    $vi /mnt/rpi/etc/conf.d/keymaps
+set up keymaps
+
+> vi /mnt/rpi/etc/conf.d/keymaps
 
     keymap="uk"
 
-clear root password::
 
-    $sed -i 's/^root:.*/root::::::::/' /mnt/rpi/etc/shadow 
+clear root password
 
+> sed -i 's/^root:.*/root::::::::/' /mnt/rpi/etc/shadow 
 
-Edit local.gen::
+Edit local.gen
 
-    $vi /mnt/rpi/etc/locale.gen
+> vi /mnt/rpi/etc/locale.gen
 
+    en\_US ISO-8859-1
+    en\_US.UTF-8 UTF-8
+    en\_GB ISO-8859-1
+    en\_GB.UTF-8 UTF-8
 
 umount sd card..
 
 ------------------ insert sd card into rp and boot ------------------
 
-Fix keymaps, update local::
+# Raspberry Pi 3 running:
 
-    $rc-update add keymaps boot
-    $rc-service keymaps restart
-    $locale-gen
+Fix keymaps, update local
 
-No network of dhcp so use ifconfig and iproute::
+> rc-update add keymaps boot  
+> rc-service keymaps restart  
+> locale-gen  
 
-    Add udev rule to make network interface name be eth0
+Set time
 
-    $ifconfig eth0 192.168.11.99/24
-    $route add default gw 192.168.11.2
+> date MMDDhhmmYYYY  
+> rc-update add swclock boot  
+> rc-update del hwclock boot  
 
-    emerge netifrc
-    rc-update add net.eth0
+Create users
 
-Set time::
+> useradd -m -g users -G wheel peter  
+> passwd peter
 
-    $date MMDDhhmmYYYY
-    $rc-update add swclock boot
-    $rc-update del hwclock boot
+Fix the network interface names by creating a /etc/udev/rules.d/99\_my.rules
 
-Create users::
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
-    $useradd -m -g users -G wheel peter
-    $passwd peter
+Add the startup for the network
 
-Enable sshd if need to do the rest remotely::
+> rc-update add net.eth0 boot
 
-    $rc-update add sshd
-    $rc-service sshd start
+Enable sshd if need to do the rest remotely
+
+> rc-update add sshd  
+> rc-service sshd start  
+
+# SSH running so remote login is possible:
+
+Sync portage
+
+> emerge-webrsync  
+
+> eselect profile list  
+> eselect locale list  
+
+Setup portage use flags
+
+    copy from my github the general uses file
+
 
     $usermod -a -G cron peter
 
-Sync portage::
-
-    $emerge-webrsync
-
-    $eselect profile list
-    $eselect locale list
 
 emerge "base" packages I like::
 
-    $emerge --ask app-misc/screen
-    $emerge --ask app-portage/gentoolkit
-    $emerge --ask app-editors/vim
-        USE=python -crypt, set in package.use subfolder
-    $emerge --ask dev-vcs/git
-        USE=-perl
-    $emerge --ask app-admin/sudo
-        USE=-sendmail
-    $emerge --ask net-misc/chrony
-        USE=-nts -pts -nettle
-    $emerge --ask sysklogd
-    $emerge --ask dcron
+> emerge app-misc/screen
+> emerge app-portage/gentoolkit
+> emerge app-editors/vim
+> emerge dev-vcs/git
+> emerge app-admin/sudo
+> emerge net-misc/chrony
+> emerge sysklogd
+> emerge dcron
 
     $usermod -a -G cron peter
     $rc-update add dcron default
