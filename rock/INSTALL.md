@@ -1,33 +1,33 @@
 # On a host PC
 
-Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine
+Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine.
 
-For RockPo64, we use GPT and a EFI partition
+For RockPo64, we use GPT and a EFI partition, run fdisk...
 
 > sudo fdisk /dev/sdc
 
-Delete all paritions with the 'd' command
+Delete all paritions with the 'd' command.
 
-Create the GPT partition table 'g'
+Create the GPT partition table 'g'.
 
 We need to make room for the u-boot images so start first parition at LBA 32768!
 
-we use vfat for boot parition and want to end so next partition starts on a 4M boundary so::
+We use vfat for boot parition and want to end so next partition starts on a 4M boundary so:
 
-    n -> p -> 1 -> 32768 -> 409599
+> n -> p -> 1 -> 32768 -> 409599
 
-Then the root partition..
+Then the root partition.
 
-    n -> p -> 2 -> <ret> -> <ret>
+> n -> p -> 2 -> <ret> -> <ret>
 
 Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
 integer, note the integer part of the answer and multiply back to the 
-sector count, delete partition and recreate with new last sector
+sector count, delete partition and recreate with new last sector.
 
-Set parition types
+Set parition types like so:
 
-    t -> 1 -> 1
-    t -> 2 -> 20
+> t -> 1 -> 1  
+> t -> 2 -> 20
 
 Example:
 
@@ -37,13 +37,13 @@ Example:
 | /dev/sdc2 | 409600 | 62332927 | 61923328 | 29.5G | Linux filesystem |
 
 
-create filesystems for each
+Create filesystems for each like so:
 
 > mkfs.vfat -n BOOT /dev/sdc1
 > mkfs.ext4 -L ROOT /dev/sdc2
 
-Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.bz2
-Mount sd card root parition and untar stage3..
+Get stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.bz2.
+Mount sd card root parition and untar stage3.
 
 > mount /dev/sdc2 /mnt/root
 > tar -xpf stage3-xxx -C /mnt/root
@@ -63,56 +63,56 @@ Get portage-latest.tar.bz2
 
 create & chroot to gentoo environment on PC (if not already using Gentoo)
 
-Hint for non-gentoo native PC::
+Hint for non-gentoo native PC:
 
-    Download stage3-amd64-openrx-xxx.tar.xz from gentoo
-    create /mnt/gentoo
-    unzip stage3 into /mnt/gentoo
+* Download stage3-amd64-openrx-xxx.tar.xz from gentoo
+* Create /mnt/gentoo
+* unzip stage3 into /mnt/gentoo
 
-    cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf
+> cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf
 
-    $mount -types proc /proc /mnt/gentoo/proc
-    $mount --rbind /sys /mnt/gentoo/sys
-    $mount --make-rslave /mnt/gentoo/sys
-    $mount --rbind /dev /mnt/gentoo/dev
-    $mount --make-rslave /mnt/gentoo/dev
-    $mount --bind /run /mnt/gentoo/run
-    $mount --make-slave /mnt/gentoo/run
-    $chroot /mnt/gentoo /bin/bash
+> mount -types proc /proc /mnt/gentoo/proc
+> mount --rbind /sys /mnt/gentoo/sys
+> mount --make-rslave /mnt/gentoo/sys
+> mount --rbind /dev /mnt/gentoo/dev
+> mount --make-rslave /mnt/gentoo/dev
+> mount --bind /run /mnt/gentoo/run
+> mount --make-slave /mnt/gentoo/run
+> chroot /mnt/gentoo /bin/bash
 
-    $source /etc/profile
-    $export PS1="(chroot) ${PS1}"
+> source /etc/profile
+> export PS1="(chroot) ${PS1}"
 
-If not already done, install cross compiler::
+If not already done, install cross compiler;
 
-    $emerge --ask sys-devel/crossdev
-    $emerge --ask app-eselect/eselect-repository
-    $eselect repository create crossdev
-    $crossdev -S -t aarch64-unknown-linux-gnu
+> emerge --ask sys-devel/crossdev
+> emerge --ask app-eselect/eselect-repository
+> eselect repository create crossdev
+> crossdev -S -t aarch64-unknown-linux-gnu
 
-Build the kernel with the cross-compiler::
+Build the kernel with the cross-compiler:
 
-    $emerge --ask sys-kernel/gentoo-sources
+> emerge --ask sys-kernel/gentoo-sources
 
-Get the config::
+Get the config;
 
-    $git clone https://github.com/peter1010/RockPro64.git xxx
+> git clone https://github.com/peter1010/RockPro64.git xxx
 
 Source will end up in /usr/src/linux-xxx-yyy-zzz
-so perhaps make a symbolic link to a generic folder linux-rock::
+so perhaps make a symbolic link to a generic folder linux-rock:
 
-    $cd /usr/src/linux-rock
+> cd /usr/src/linux-rock
 
-    $make ARCH=arm64 rockpro64_linux_defconfig
-    $scripts/kconfig/merge_config.sh /xxx/my_rockpro64-rk3399_defconfig
+> make ARCH=arm64 rockpro64_linux_defconfig
+> scripts/kconfig/merge_config.sh /xxx/my_rockpro64-rk3399_defconfig
 
-    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig
-    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1
-    $make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/root/
+> make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig
+> make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1
+> make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/root/
 
-check /mnt/root/lib/modules/ contains the modules
+Check /mnt/root/lib/modules/ contains the modules.
 
-Mount the boot partition and copy across the kernel::
+Mount the boot partition and copy across the kernel.
 
     ...
 
@@ -120,26 +120,24 @@ Create u-boot and install
 
     ...
 
-Set root ready for startup - temp set up for DNS::
+Set root ready for startup - temp set up for DNS;
 
-    $cp /etc/resolv.conf /mnt/root/etc/resolv.conf
+> cp /etc/resolv.conf /mnt/root/etc/resolv.conf
 
+Set up hostname;
 
-Set up hostname::
+> vi /mnt/root/etc/hostname
 
-    $vi /mnt/root/etc/hostname
+and/or
 
-  and/or
+> vi /mnt/root/etc/conf.d/hostname
 
-    $vi /mnt/root/etc/conf.d/hostname
+Set up locale;
 
+> ln -sf /usr/share/zoneinfo/Europe/London /mnt/root/etc/localtime
+> echo "Europe/London" > /mnt/root/etc/timezone
 
-Set up locale::
-
-    $ln -sf /usr/share/zoneinfo/Europe/London /mnt/root/etc/localtime
-    $echo "Europe/London" > /mnt/root/etc/timezone
-
-set up keymaps::
+set up keymaps;
 
     $vi /mnt/root/etc/conf.d/keymaps
 
