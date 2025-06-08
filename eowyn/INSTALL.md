@@ -1,10 +1,11 @@
 # On a host PC
 
+
 For Raspberry PI, we use MBR boot sector (to be backwards compatible)
 
-> $sudo fdisk /dev/sdc
+> sudo fdisk /dev/sdc
 
-Delete all paritions with the 'd' command
+Delete all paritions with the 'd' command.
 
 we use vfat for boot parition and want to end on a 4M boundary so
 
@@ -16,17 +17,17 @@ We need a swap parition  2x RAM  so subract 1 or 2G from root partition
 
 Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
 integer, note the integer part of the answer and multiply back to the 
-sector count, delete partition and recreate with new last sector
+sector count, delete partition and recreate with new last sector.
 
 Finally
 
 > n -> p -> 3 -> <ret> -> <ret>
 
-Set parition 1 as boot
+Set partition 1 as boot:
 
 > a -> 1
 
-Set parition types
+Set parition types like so:
 
 > t -> 1 -> c  
 > t -> 2 -> 83  
@@ -46,33 +47,19 @@ Check the boundaries
 409600 / (2 * 1024 * 4) = 50
 60645376 / (2 * 1024 * 4) = 7403
 
-create filesystems for each
+Create filesystems for each like so:
 
-> $mkfs.vfat -n BOOT /dev/sdc1<br>
-> $mkfs.ext4 -L ROOT /dev/sdc2<br>
-> $mkswap  -L SWAP /dev/sdc3<br>
+> mkfs.vfat -n BOOT /dev/sdc1
+> mkfs.ext4 -L ROOT /dev/sdc2
+> mkswap  -L SWAP /dev/sdc3  
 
 create & chroot to gentoo environment on PC (if not already using Gentoo)
 
 Hint for non-gentoo native PC
 
-Download stage3-amd64-openrx-xxx.tar.xz from gentoo  
-Create /mnt/gentoo  
-Unzip stage3 into /mnt/gentoo  
 
-> $cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf  
 
-> $mount -types proc /proc /mnt/gentoo/proc  
-> $mount --rbind /sys /mnt/gentoo/sys  
-> $mount --make-rslave /mnt/gentoo/sys  
-> $mount --rbind /dev /mnt/gentoo/dev  
-> $mount --make-rslave /mnt/gentoo/dev  
-> $mount --bind /run /mnt/gentoo/run  
-> $mount --make-slave /mnt/gentoo/run  
-> $chroot /mnt/gentoo /bin/bash  
 
-> $source /etc/profile  
-> $export PS1="(chroot) ${PS1}"  
 
 Mount SD boot parition
 
