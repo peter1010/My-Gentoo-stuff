@@ -94,7 +94,7 @@ Source will end up in /usr/src/linux-xxx-yyy-zzz so perhaps make a symbolic link
 Get the config from https://github.com/peter1010/My-Gentoo-Stuff/rock/Kernel/build
 
 > make ARCH=arm64 rockpro64\_linux\_defconfig  
-> scripts/kconfig/merge_config.sh /xxx/my_rockpro64-rk3399_defconfig
+> scripts/kconfig/merge\_config.sh /xxx/my\_rockpro64-rk3399\_defconfig
 
 Build the kernel with the cross-compiler:
 
@@ -136,8 +136,8 @@ Adjust /mnt/rock/etc/portage/make.conf
     EMERGE_DEFAULT_OPTS="--jobs=1 --ask"
     LLVM_TARGETS="arm aarch64"  
     VIDEO_CARDS="panfrost"
-# BINPKG_FORMAT="gpkg"
-# FEATURES="buildpkg"
+\# BINPKG_FORMAT="gpkg"
+\# FEATURES="buildpkg"
     USE="-pulseaudio alsa wayland elogind -systemd cups -kde -dbus"  
 
 > cp /etc/resolv.conf /mnt/root/etc/resolv.conf
@@ -206,22 +206,22 @@ No dhcp so use ifconfig and iproute::
 replace **** with ethernet network dev
 
 
-Enable sshd if need to do the rest remotely::
+Enable sshd if need to do the rest remotely
 
-    $rc-update add sshd
-    $rc-service sshd start
+> rc-update add sshd  
+> rc-service sshd start
 
 
-Sync portage::
+Sync portage
 
-    $emerge-webrsync
+> emerge-webrsync
 
-    $eselect profile list
-    $eselect locale list
+> eselect profile list  
+> eselect locale list
 
 emerge "base" packages I like::
 
-    $emerge --ask net-misc/dhcpcd
+> emerge net-misc/dhcpcd
 
 Edit /etc/dhcpcd ...
 
