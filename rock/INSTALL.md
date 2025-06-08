@@ -1,6 +1,9 @@
 # On a host PC
 
+
 Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine.
+
+## Format Boot/Storage Medium
 
 For RockPo64, we use GPT and a EFI partition, run fdisk...
 
@@ -43,16 +46,18 @@ Example:
 
 Create filesystems for each like so:
 
-> mkfs.vfat -n BOOT /dev/sdc1
+> mkfs.vfat -n BOOT /dev/sdc1  
 > mkfs.ext4 -L ROOT /dev/sdc2
+
+## Install Stage 3 root partition
 
 Download stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.bz2 from gentoo website.
 
 Mount sd card root partition and untar stage3.
 
-> mkdir /mnt/root
-> mount /dev/sdc2 /mnt/root
-> tar -xpf stage3-xxx -C /mnt/root
+> mkdir /mnt/root  
+> mount /dev/sdc2 /mnt/root  
+> tar -xpf stage3-xxx -C /mnt/root  
 
 Fixup /mnt/root/etc/fstab
 
@@ -66,37 +71,36 @@ Get portage-latest.tar.bz2
 > mkdir /mnt/root/etc/portage/repos.conf
 > cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf
 
+## Build the kernel
+
 
 create & chroot to gentoo environment on PC (if not already using Gentoo)
 
 See NON_GENTOO_PC.md for setting up Gentoo build env
 
-
 If not already done, install cross compiler;
 
-> emerge --ask sys-devel/crossdev
-> emerge --ask app-eselect/eselect-repository
-> eselect repository create crossdev
+> emerge --ask sys-devel/crossdev  
+> emerge --ask app-eselect/eselect-repository  
+> eselect repository create crossdev  
 > crossdev -S -t aarch64-unknown-linux-gnu
 
-Build the kernel with the cross-compiler:
+Build the kernel with the cross-compiler
 
 > emerge --ask sys-kernel/gentoo-sources
 
-Get the config;
-
-> git clone https://github.com/peter1010/RockPro64.git xxx
-
 Source will end up in /usr/src/linux-xxx-yyy-zzz
-so perhaps make a symbolic link to a generic folder linux-rock:
+so perhaps make a symbolic link to a generic folder linux-rock
 
 > cd /usr/src/linux-rock
 
-> make ARCH=arm64 rockpro64_linux_defconfig
+Get the config from https://github.com/peter1010/My-Gentoo-Stuff/rock/Kernel/build
+
+> make ARCH=arm64 rockpro64_linux_defconfig  
 > scripts/kconfig/merge_config.sh /xxx/my_rockpro64-rk3399_defconfig
 
-> make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig
-> make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1
+> make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig  
+> make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1  
 > make ARCH=arm CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/root/
 
 Check /mnt/root/lib/modules/ contains the modules.

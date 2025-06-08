@@ -2,6 +2,8 @@
 
 Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine.
 
+## Format Boot/Storage Medium
+
 For Raspberry PI, we use MBR boot sector (to be backwards compatible).
 
 > sudo fdisk /dev/sdc
@@ -24,10 +26,10 @@ Set partition 1 as boot:
 
 > a -> 1
 
-Set parition types like so:
+Set partition types like so:
 
-> t -> 1 -> c
-> t -> 2 -> 83
+> t -> 1 -> c  
+> t -> 2 -> 83  
 
 Example:
 
@@ -42,16 +44,18 @@ Check the boundaries
 
 Create filesystems for each like so:
 
-> mkfs.vfat -n BOOT /dev/sdc1
+> mkfs.vfat -n BOOT /dev/sdc1  
 > mkfs.ext4 -L ROOT /dev/sdc2
 
-Download stage3-amd64-openrx-xxx.tar.xz from gentoo.
+## Install Stage 3 root partition
+
+Download stage3-arm64-openrx-xxx.tar.xz from gentoo.
 
 Mount sd card root partition and untar stage3.
 
-> mkdir /mnt/root
-> mount /dev/sdc2 /mnt/root
-> tar -xpf stage3-xxx -C /mnt/root
+> mkdir /mnt/root  
+> mount /dev/sdc2 /mnt/root  
+> tar -xpf stage3-xxx -C /mnt/root  
 
 Fixup /mnt/root/etc/fstab
 
@@ -65,14 +69,41 @@ Get portage-latest.tar.bz2
 > mkdir /mnt/root/etc/portage/repos.conf
 > cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf
 
+## Build the kernel
+
 
 Create & chroot to gentoo environment on PC (if not already using Gentoo)
 
 See NON_GENTOO_PC.md for setting up Gentoo build env
 
+If not already done, install cross compiler;
 
+> emerge sys-devel/crossdev  
+> emerge app-eselect/eselect-repository  
+> eselect repository create crossdev  
+> crossdev -S -t aarch64-unknown-linux-gnu  
 
-Mount SD boot parition.
+Build the kernel with the cross-compiler
+
+> emerge sys-kernel/raspberrypi-sources
+
+Source will end up in /usr/src/linux-xxx-yyy-zzz
+so perhaps make a symbolic link to a generic folder linux-rpi
+
+> cd /usr/src/linux-rpi
+
+Get the config from https://github.com/peter1010/My-Gentoo-Stuff/isengard/Kernel/build
+
+> make ARCH=arm64 bcm2711_defconfig  
+> scripts/kconfig/merge_config.sh /xxx/my_rp4i_defconfig
+
+> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig  
+> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1  
+> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/root/  
+    
+Check /mnt/root/lib/modules/ contains the modules.
+
+Mount the boot partition and copy across the kernel.
 
 > mount /dev/sdc1 /boot
 
@@ -117,26 +148,6 @@ Add following to make.conf
     LINGUAS="en_GB en fr"
     L10N="en-GB en fr"
     EMERGE_DEFAULT_OPTS="--jobs=1 --ask"
-
-If not already done, install cross compiler
-
-> emerge --ask sys-devel/crossdev
-> crossdev -S -t aarch64-unknown-linux-gnu
-
-Build the kernel with the cross-compiler
-
-> emerge --ask sys-kernel/raspberrypi-sources
-
-Source will end up in /usr/src/linux-xxx-yyy-zzz
-so perhaps make a symbolic link to a generic folder linux-rpi
-
-> cd /usr/src/linux-rpi
-> make ARCH=arm64 bcm2711_defconfig  
-> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- oldconfig  
-> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- -j1  
-> make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- modules_install INSTALL_MOD_PATH=/mnt/rpi/'  
-    
-Check /mnt/rpi/lib/modules/ contains the modules
 
 Mount the boot partition and copy across the kernel::
 

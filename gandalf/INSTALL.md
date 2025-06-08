@@ -1,44 +1,49 @@
-====================
-On a host PC
-====================
+# On a host PC
 
-For Raspberry PI, we use MBR boot sector (to be backwards compatible)::
+Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine.
 
-    $sudo fdisk /dev/sdc
+## Format Boot/Storage Medium
 
-Delete all paritions with the 'd' command
+For Raspberry PI, we use MBR boot sector (to be backwards compatible).
 
-we use vfat for boot parition and want to end on a 4M boundary so::
+> sudo fdisk /dev/sdc
 
-    n -> p -> 1 -> <ret> -> +199M
+Delete all paritions with the 'd' command.
+
+As we use vfat for boot parition and want to end on a 4M boundary so.
+
+> n -> p -> 1 -> <ret> -> +199M
 
 We need a swap parition  2x RAM  so subract 1 or 2G from root partition::
 
-    n -> p -> 2 -> <ret> -> -1G
+> n -> p -> 2 -> <ret> -> -1G
 
 Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole
 integer, note the integer part of the answer and multiply back to the 
-sector count, delete partition and recreate with new last sector
+sector count, delete partition and recreate with new last sector.
 
-Finally::
+Finally.
 
-    n -> p -> 3 -> <ret> -> <ret>
+> n -> p -> 3 -> <ret> -> <ret>
 
-Set parition 1 as boot::
+Set partition 1 as boot:
 
-    a -> 1
+> a -> 1
 
-Set parition types::
+Set partition types like so:
 
-    t -> 1 -> c
-    t -> 2 -> 83
-    t -> 3 -> 82
+
+> t -> 1 -> c  
+> t -> 2 -> 83  
+> t -> 3 -> 82  
 
 Example:
 
-/dev/sdc1  *        2048   409599   407552  199M  c W95 FAT32 (LBA
-/dev/sdc2         409600 60645375 60235776 28.7G 83 Linux
-/dev/sdc3       60645376 62748671  2103296    1G 82 Linux swap / S
+| Device    | Start    | End      | Sectors  | Size  | Type          |
+|-----------|----------|----------|----------|-------|---------------|
+| /dev/sdc1 |     2048 |   409599 |  407552  | 199M  | c W95 FAT32   |
+| /dev/sdc2 |   409600 | 60645375 | 60235776 | 28.7G | 83 Linux      |
+| /dev/sdc3 | 60645376 | 62748671 |  2103296 |    1G | 82 Linux swap |
 
 
 Check the boundaries
@@ -46,33 +51,71 @@ Check the boundaries
 409600 / (2 * 1024 * 4) = 50
 60645376 / (2 * 1024 * 4) = 7403
 
-create filesystems for each::
+Create filesystems for each like so:
 
-    $mkfs.vfat -n BOOT /dev/sdc1
-    $mkfs.ext4 -L ROOT /dev/sdc2
-    $mkswap  -L SWAP /dev/sdc3
+> mkfs.vfat -n BOOT /dev/sdc1  
+> mkfs.ext4 -L ROOT /dev/sdc2  
+> mkswap  -L SWAP /dev/sdc3
 
-create & chroot to gentoo environment on PC (if not already using Gentoo)
+## Install Stage 3 root partition
 
-Hint for non-gentoo native PC::
+Download stage3 for the Arm7 "stage3-arm7a_hardfp-xxx.tar.xz
 
-    Download stage3-amd64-openrx-xxx.tar.xz from gentoo
-    create /mnt/gentoo
-    unzip stage3 into /mnt/gentoo
+Mount sd card root partition and untar stage3.
 
-    cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf
+> mkdir /mnt/root  
+> mount /dev/sdc2 /mnt/root
+> tar -xpf stage3-xxx -C /mnt/root
 
-    $mount -types proc /proc /mnt/gentoo/proc
-    $mount --rbind /sys /mnt/gentoo/sys
-    $mount --make-rslave /mnt/gentoo/sys
-    $mount --rbind /dev /mnt/gentoo/dev
-    $mount --make-rslave /mnt/gentoo/dev
-    $mount --bind /run /mnt/gentoo/run
-    $mount --make-slave /mnt/gentoo/run
-    $chroot /mnt/gentoo /bin/bash
+Fixup /mnt/root/etc/fstab
 
-    $source /etc/profile
-    $export PS1="(chroot) ${PS1}"
+  /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
+  /dev/mmcblk0p2          /               ext4            noatime         0 1     
+  /dev/mmcblk0p3          none            swap            sw              0 0
+
+Get portage-latest.tar.bz2
+
+> tar xpf portage-latest.tar.bz2 -C /mnt/root/usr
+
+> mkdir /mnt/root/etc/portage/repos.conf
+> cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf
+
+## Build the kernel
+
+
+Create & chroot to gentoo environment on PC (if not already using Gentoo)
+
+See NON_GENTOO_PC.md for setting up Gentoo build env
+
+If not already done, install cross compiler;
+
+> emerge sys-devel/crossdev  
+> emerge app-eselect/eselect-repository  
+> eselect repository create crossdev  
+> crossdev -S -t armv7a-unknown-linux-gnueabihf
+
+Build the kernel with the cross-compiler
+
+> emerge sys-kernel/raspberrypi-sources
+
+Source will end up in /usr/src/linux-xxx-yyy-zzz
+so perhaps make a symbolic link to a generic folder linux-rpi
+
+> cd /usr/src/linux-rpi
+
+Get the config from https://github.com/peter1010/My-Gentoo-Stuff/gandalf/Kernel/build
+
+> make ARCH=arm bcm2709_defconfig  
+> scripts/kconfig/merge_config.sh /xxx/my_rpi3_defconfig
+
+> make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- oldconfig  
+> make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- -j1  
+> make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- modules_install INSTALL_MOD_PATH=/mnt/root/
+
+Check /mnt/root/lib/modules/ contains the modules.
+
+Mount the boot partition and copy across the kernel.
+
 
 Mount SD boot parition::
 
@@ -95,19 +138,6 @@ Edit /boot/config.txt::
 
     $umount /boot
 
-Get stage3 for the Arm7 "stage3-arm7a_hardfp-xxx.tar.xz
-
-Mount sd card root parition and untar stage3..::
-
-    $mount /dev/sdc2 /mnt/rpi
-    $tar -xpf stage3-xxx -C /mnt/rpi
-
-Fixup /mnt/raspberrypi/etc/fstab::
-
-/dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2
-/dev/mmcblk0p2          /               ext4            noatime         0 1     
-/dev/mmcblk0p3          none            swap            sw              0 0
-
 Adjust  portage/make.conf::
 
 # Raspberry Pi 3 running in 32 bit mode:
@@ -119,13 +149,6 @@ FCFLAGS="${COMMON_FLAGS}"
 FFLAGS="${COMMON_FLAGS}"
 
 
-Get portage-latest.tar.bz2::
-
-    $tar xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
-
-    $mkdir /mnt/rpi/etc/portage/repos.conf
-    $cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
-
 Add following to make.conf::
 
     BINPKG_FORMAT="gpkg"
@@ -134,29 +157,8 @@ Add following to make.conf::
     LINGUAS="en_GB"
     L10N="en-GB"
 
-If not already done, install cross compiler::
-
-    $emerge --ask sys-devel/crossdev
-    $crossdev -S -t armv7a-unknown-linux-gnueabihf
-
-Build the kernel with the cross-compiler::
-
-    $emerge --ask sys-kernel/raspberrypi-sources
-
-Source will end up in /usr/src/linux-xxx-yyy-zzz
-so perhaps make a symbolic link to a generic folder linux-rpi::
-
-    $cd /usr/src/linux-rpi
-    $make ARCH=arm bcm2709_defconfig
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- oldconfig
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- -j1
-    $make ARCH=arm CROSS_COMPILE=armv7a-unknown-linux-gnueabihf- modules_install INSTALL_MOD_PATH=/mnt/rpi/
 
 
-
-check /mnt/rpi/lib/modules/ contains the modules
-
-Mount the boot partition and copy across the kernel::
 
     $mount /dev/sdc1 /mnt/rpi/boot
     $cp arch/arm/boot/Image /mnt/rpi/boot/kernel.img
