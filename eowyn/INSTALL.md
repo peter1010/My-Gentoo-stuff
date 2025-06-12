@@ -67,8 +67,8 @@ Mount sd card root partition and untar stage3.
 
 Fixup /mnt/rpi/etc/fstab
 
-    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
-    /dev/mmcblk0p2          /               ext4            noatime         0 1     
+    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2   
+    /dev/mmcblk0p2          /               ext4            noatime         0 1  
     /dev/mmcblk0p3          none            swap            sw              0 0
 
 Get portage-latest.tar.bz2
@@ -102,7 +102,7 @@ If not already done, install cross compiler;
 > eselect repository create crossdev  
 > crossdev -S -t armv7a-unknown-linux-gnueabihf
 
-Get the linux sources files:
+Get the linux source files:
 
 > emerge sys-kernel/raspberrypi-sources
 
@@ -160,7 +160,6 @@ Adjust /mnt/rpi/etc/portage/make.conf
     FCFLAGS="${COMMON_FLAGS}"  
     FFLAGS="${COMMON_FLAGS}"  
 
-    LC_MESSAGES=C
     BINPKG_FORMAT="gpkg"
     MAKEOPTS="-j1"  
     LINGUAS="en_GB"  
@@ -209,7 +208,6 @@ umount sd card..
 
 # Raspberry Pi 3 running:
 
-
 Fix keymaps, update local
 
 > rc-update add keymaps boot  
@@ -231,7 +229,9 @@ Fix the network interface names by creating a /etc/udev/rules.d/99\_my.rules
 
     SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
-No network of dhcp so use ifconfig and iproute
+Reboot and check network interface is now eth0
+
+Initinally no dhcp so use ifconfig and iproute..
 
 > ifconfig eth0 192.168.11.99/24
 > route add default gw 192.168.11.2
@@ -239,16 +239,16 @@ No network of dhcp so use ifconfig and iproute
 Enable sshd if need to do the rest remotely
 
 > rc-update add sshd  
-> rc-service sshd start  
+> rc-service sshd start
 
 # SSH running so remote login is possible:
 
 Sync portage
 
-> emerge-webrsync  
+> emerge-webrsync
 
 > eselect profile list  
-> eselect locale list  
+> eselect locale list
 
 Setup portage use flags
 
@@ -259,20 +259,26 @@ Setup console fonts.
 
 Get network to automatically come up using dhcp
 
-    $emerge net-misc/dhcpcd
+> emerge net-misc/dhcpcd
 
 Edit /etc/dhcpcd ...
 
-uncomment "hostname",
-comment out "option hostname" we want to supply hostname to the server
-uncomment "option ntp_servers"
+    uncomment "hostname"  
+    comment out "option hostname" we want to supply hostname to the server  
+    uncomment "option ntp\_servers"  
 
-Add fallback section with static address
+    slaac token ::16  
+    \# if dhcp fails, assigne IP address so we are reachable  
+    fallback static_xxx  
+
+    profile static_xxx
+    static ip_address=192.168.11.16/24
+
 
 Start the dhcpcd service::
 
-    $rc-update add dhcpcd
-    $rc-service dhcpcd
+> rc-update add dhcpcd  
+> rc-service dhcpcd
 
 
 emerge "base" packages I like::

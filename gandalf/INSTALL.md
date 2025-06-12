@@ -239,13 +239,13 @@ Fix keymaps, update local
 
 > rc-update add keymaps boot  
 > rc-service keymaps restart  
-> locale-gen  
+> locale-gen
 
 Set time
 
-> date MMDDhhmmYYYY  
+> date MMDDhhmmYYYY   
 > rc-update add swclock boot  
-> rc-update del hwclock boot  
+> rc-update del hwclock boot
 
 Create users
 

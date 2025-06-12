@@ -2,7 +2,6 @@ app-admin/sysklogd ~arm64
 app-admin/sshguard ~arm64
 dev-libs/date **
 dev-libs/bemenu ~arm64
-gui-apps/waybar *
 gui-libs/gtk-layer-shell ~arm64
 gui-wm/wayfire ~arm64
 dev-python/cachecontrol *

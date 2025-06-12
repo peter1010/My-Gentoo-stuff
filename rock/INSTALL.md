@@ -36,16 +36,16 @@ Set partition types like so:
 
 Example:
 
-| Device    | Start  | End      | Sectors  | Size  | Type             |
-|-----------|--------|----------|----------|-------|------------------|
-| /dev/sdc1 |  32768 |   409599 |   407552 |  199M |       EFI System |
-| /dev/sdc2 | 409600 | 62332927 | 61923328 | 29.5G | Linux filesystem |
+| Device    | Start    | End      | Sectors  | Size  | Type          |
+|-----------|----------|----------|----------|-------|---------------|
+| /dev/sdc1 |    32768 |   409599 |   407552 |  199M | EFI System    |
+| /dev/sdc2 |   409600 | 62332927 | 61923328 | 29.5G | Linux         |
 
 
 Create filesystems for each like so:
 
 > mkfs.vfat -n BOOT /dev/sdc1  
-> mkfs.ext4 -L ROOT /dev/sdc2
+> mkfs.ext4 -L ROOT /dev/sdc2  
 
 ## Install Stage 3 root partition
 
@@ -59,8 +59,8 @@ Mount sd card root partition and untar stage3.
 
 Fixup /mnt/rock/etc/fstab
 
-    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
-    /dev/mmcblk0p2          /               ext4            noatime         0 1
+    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2   
+    /dev/mmcblk0p2          /               ext4            noatime         0 1  
 
 Get portage-latest.tar.bz2
 
@@ -70,7 +70,6 @@ Get portage-latest.tar.bz2
 > cp /mnt/rock/usr/share/portage/config/repos.conf /mnt/rock/etc/portage/repos.conf/gentoo.conf
 
 ## Build the kernel
-
 
 Create & chroot to gentoo environment on PC (if not already using Gentoo)
 
@@ -150,7 +149,6 @@ and/or
 
 > vi /mnt/rock/etc/conf.d/hostname
 
-
 Set up locale
 
 > ln -sf /usr/share/zoneinfo/Europe/London /mnt/rock/etc/localtime
@@ -177,40 +175,49 @@ Edit local.gen
 
 umount sd card..
 
------------------- insert sd card into rp and boot ------------------
+------------------ insert sd card into rock Pro and boot ------------------
 
 # Rock Pro running
+
+Check default compiler flags in make.conf by running following and checking the output..
+
+> gcc -### -march=native -x c -
+> gcc -fverbose-asm -march=native -mcpu=native -Q --help=target
 
 Fix keymaps, update local
 
 > rc-update add keymaps boot  
 > rc-service keymaps restart  
-> locale-gen  
+> locale-gen
 
 Set time
 
 > date MMDDhhmmYYYY  
 > rc-update add swclock boot  
-> rc-update del hwclock boot  
+> rc-update del hwclock boot
 
 Create users
 
 > useradd -m -g users -G wheel peter  
 > passwd peter
 
-No dhcp so use ifconfig and iproute::
+Fix the network interface names by creating a /etc/udev/rules.d/99\_my.rules
 
-    $ifconfig **** 192.168.11.99/24
-    $route add default gw 192.168.11.2
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
-replace **** with ethernet network dev
+Reboot and check network interface is now eth0
 
+Initinally no dhcp so use ifconfig and iproute..
+
+> ifconfig eth0 192.168.11.99/24
+> route add default gw 192.168.11.2
 
 Enable sshd if need to do the rest remotely
 
 > rc-update add sshd  
 > rc-service sshd start
 
+# SSH running so remote login is possible:
 
 Sync portage
 
@@ -219,22 +226,34 @@ Sync portage
 > eselect profile list  
 > eselect locale list
 
-emerge "base" packages I like::
+Setup portage use flags
+
+    copy from my github the general uses file
+
+
+
+Get network to automatically come up using dhcp
 
 > emerge net-misc/dhcpcd
 
 Edit /etc/dhcpcd ...
 
-uncomment "hostname",
-comment out "option hostname" we want to supply hostname to the server
-uncomment "option ntp_servers"
+    uncomment "hostname"  
+    comment out "option hostname" we want to supply hostname to the server  
+    uncomment "option ntp\_servers"  
 
-Add fallback section with static address
+    slaac token ::16  
+    \# if dhcp fails, assigne IP address so we are reachable  
+    fallback static_xxx  
+
+    profile static_xxx
+    static ip_address=192.168.11.16/24
+
 
 Start the dhcpcd service::
 
-    $rc-update add dhcpcd
-    $rc-service dhcpcd
+> rc-update add dhcpcd  
+> rc-service dhcpcd
 
 
 emerge "base" packages I like::
