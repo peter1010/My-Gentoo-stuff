@@ -1,5 +1,7 @@
 app-admin/sudo -sendmail offensive
 app-crypt/gnupg smartcard usb
+app-crypt/pinentry -gtk -X
+app-crypt/gcr -gtk
 app-editors/vim python -crypt -lua -X
 app-editors/gvim python -crypt -lua -clientserver
 app-text/poppler cairo
@@ -42,10 +44,3 @@ sys-process/psmisc -X
 www-client/chromium -X -hangouts
 www-client/firefox -X wayland dbus
 x11-libs/libva opengl
-*/* PYTHON_TARGETS: python3_11 python3_12
-# required by gnome-base/gnome-keyring-42.1-r2::gentoo
-# required by virtual/secret-service-0::gentoo
-# required by app-crypt/libsecret-0.21.1::gentoo
-# required by app-editors/vscodium-1.92.2.24228::gentoo
-# required by vscodium (argument)
->=app-crypt/gcr-3.41.1-r2:0 gtk
