@@ -14,7 +14,7 @@ Create the GPT partition table 'g'.
 
 We need to make room for the u-boot images so start first parition at LBA 32768!
 
-We use vfat for boot parition and want to end so next partition starts on a 4M boundary so:
+We use vfat for boot partition and want to end so next partition starts on a 4M boundary so:
 
 > n -> p -> 1 -> 32768 -> 409599
 
@@ -64,9 +64,10 @@ Fixup /mnt/rock/etc/fstab
 
 Get portage-latest.tar.bz2
 
+> wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2  
 > tar -xpf portage-latest.tar.bz2 -C /mnt/rock/usr
 
-> mkdir /mnt/rock/etc/portage/repos.conf
+> mkdir /mnt/rock/etc/portage/repos.conf  
 > cp /mnt/rock/usr/share/portage/config/repos.conf /mnt/rock/etc/portage/repos.conf/gentoo.conf
 
 ## Build the kernel
@@ -205,6 +206,11 @@ Fix the network interface names by creating a /etc/udev/rules.d/99\_my.rules
 
     SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
+No dhcp so use ifconfig and iproute
+
+> ifconfig **** 192.168.11.99/24  
+> route add default gw 192.168.11.2  
+
 Reboot and check network interface is now eth0
 
 Initinally no dhcp so use ifconfig and iproute..
@@ -233,6 +239,8 @@ Setup portage use flags
 
 
 Get network to automatically come up using dhcp
+=======
+emerge "base" packages I like
 
 > emerge net-misc/dhcpcd
 
@@ -250,7 +258,7 @@ Edit /etc/dhcpcd ...
     static ip_address=192.168.11.16/24
 
 
-Start the dhcpcd service::
+Start the dhcpcd service
 
 > rc-update add dhcpcd  
 > rc-service dhcpcd
