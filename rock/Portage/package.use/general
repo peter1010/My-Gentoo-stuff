@@ -3,15 +3,21 @@ app-crypt/gnupg -smartcard
 app-editors/vim python -crypt -lua
 app-text/xmlto text
 dev-lang/python
-dev-libs/boost context icu
+dev-lang/rust-bin rustfmt 
+dev-libs/boost context icu -stacktrace
+dev-libs/botan boost
 dev-vcs/git -perl
-media-libs/freetype harfbuzz
+games-strategy/wesnoth -dbus server
+media-libs/libsdl2 X -wayland -haptic -sound -alsa
+media-libs/freetype -harfbuzz -adobe-cff -cleartype-hinting 
+media-libs/harfbuzz -introspection -graphite -cairo
 media-libs/libvpx postproc
-media-libs/sdl2-image jpeg png
-media-libs/sdl2-mixer vorbis
+media-libs/sdl2-image jpeg png webp
+media-libs/sdl2-mixer vorbis -wav
 media-video/motion ffmpeg mmal
 net-dns/avahi python -introspection
 net-misc/chrony -nts -pts
+net-misc/kea test
 sys-apps/busybox -pam
 sys-apps/dbus -systemd
 sys-apps/smartmontools -daemon -update-drivedb
@@ -20,3 +26,4 @@ www-servers/lighttpd -lua
 www-servers/uwsgi python
 x11-libs/cairo X
 x11-libs/libva opengl
+x11-libs/pango -introspection

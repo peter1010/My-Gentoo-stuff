@@ -8,6 +8,19 @@ For MacBook we use  gpt
 
 > sudo fdisk /dev/sda
 
+Delete all partitions with the 'd' command.
+
+
+
+We use vfat for boot partition
+
+
+
+Set partition types like so:
+
+> t -> 1 -> 1  
+> t -> 2 -> 20
+
 Example:
 
 | Device    | Start    | End       | Sectors   |   Size | Type             |
@@ -15,6 +28,7 @@ Example:
 | /dev/sda1 |     2048 |    526335 |    524288 |   256M | EFI System       |
 | /dev/sda2 |   526336 |  34080767 |  33554432 |    16G | Linux swap       |
 | /dev/sda3 | 34080768 | 977105026 | 943024259 | 449.7G | Linux filesystem |
+
 
 Create filesystems for each like so:
 
@@ -26,11 +40,9 @@ Create filesystems for each like so:
 
 Download stage3 stage3-amd64-openrc-xxx.tar.xz from Gentoo.
 
-
-
-
 Mount root partition and untar stage3..
 
+> mkdir /mnt/root  
 > mount /dev/sda3 /mnt/root  
 > tar -xpf stage3-xxx -C /mnt/root  
 
@@ -43,17 +55,51 @@ Fixup /mnt/root/etc/fstab
 Get portage-latest.tar.bz2
 
 > wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2  
-> tar xpf portage-latest.tar.bz2 -C /mnt/root/usr  
+> tar -xpf portage-latest.tar.bz2 -C /mnt/root/usr  
 
 > mkdir /mnt/root/etc/portage/repos.conf  
 > cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf<br>
 
-create & chroot to gentoo environment on PC (if not already using Gentoo)
-
-### Adjust portage/make.conf
+## Build the kernel
 
 
-Add following to make.conf
+Create & chroot to gentoo environment on PC (if not already using Gentoo)
+
+See NON\_GENTOO\_PC.md for setting up Gentoo build env
+
+
+
+Get the linux source files:
+
+> emerge --ask sys-kernel/gentoo-sources
+
+Source will end up in /usr/src/linux-xxx-yyy-zzz so perhaps make a symbolic link to a generic folder linux
+
+> cd /usr/src/linux-rock
+
+Get the configfrom https://github.com/peter1010/My-Gentoo-Stuff/frodo/Kernel/build
+
+
+
+> make oldconfig  
+> make  
+> make modules\_install INSTALL\_MOD\_PATH=/mnt/root
+
+Mount the boot partition and copy across the kernel
+
+> mount /dev/sda1 /mnt/boot
+
+
+Create grub and install
+
+
+## Tweaks ready to boot nicely
+
+At this point one could umount the CD rom and boot the laptop. Of for convenience continue 
+
+
+Adjust portage/make.conf
+
 
     BINPKG_FORMAT="gpkg"
     FEATURES="buildpkg"
@@ -61,51 +107,26 @@ Add following to make.conf
     LINGUAS="en_GB"
     L10N="en-GB"
 
-## Build the kernel
 
-> $emerge --ask sys-kernel/gentoo-sources
 
-Source will end up in /usr/src/linux-xxx-yyy-zzz
-
-Make a symbolic link to a generic folder linux
-
-> $eselect kernel list<br>
-> $eselect kernel set ?
-
-Copy across config
-
-> $modprobe configs<br>
-> $zcat /proc/config.gz > /usr/src/linux/.config
-
-> $cd /usr/src/linux<br>
-> $make oldconfig<br>
-> $make<br>
-> $make modules_install<br>
-
-Mount the boot partition and copy across the kernel
-
-> $mount /dev/sda1 /mnt/boot
-
-Set root ready for startup - temp set up for DNS
-
-> $cp /etc/resolv.conf /mnt/root/etc/resolv.conf
+> cp /etc/resolv.conf /mnt/root/etc/resolv.conf
 
 Set up hostname
 
-> $vi /mnt/root/etc/hostname
+> vi /mnt/root/etc/hostname
 
 and/or
 
-> $vi /mnt/root/etc/conf.d/hostname
+> vi /mnt/root/etc/conf.d/hostname
 
 Set up locale
 
-> $ln -sf /usr/share/zoneinfo/Europe/London /mnt/root/etc/localtime<br>
-> $echo "Europe/London" > /mnt/root/etc/timezone
+> ln -sf /usr/share/zoneinfo/Europe/London /mnt/root/etc/localtime  
+> echo "Europe/London" > /mnt/root/etc/timezone
 
 set up keymaps
 
-> $vi /mnt/root/etc/conf.d/keymaps
+> vi /mnt/root/etc/conf.d/keymaps
 
     keymap="uk"
 
@@ -117,30 +138,37 @@ Edit local.gen
 
 > $vi /mnt/root/etc/locale.gen
 
+    en\_US ISO-8859-1
+    en\_US.UTF-8 UTF-8
+    en\_GB ISO-8859-1
+    en\_GB.UTF-8 UTF-8
+
 umount..
 
 ------------------ boot ------------------
 
+# Frodo is running
+
 Fix keymaps, update local
 
-> $rc-update add keymaps boot<br>
-> $rc-service keymaps restart<br>
-> $locale-gen
+> rc-update add keymaps boot  
+> rc-service keymaps restart  
+> locale-gen  
 
 Set time
 
-> $date MMDDhhmmYYYY<br>
-> $rc-update add swclock boot<br>
-> $rc-update del hwclock boot
+> date MMDDhhmmYYYY  
+> rc-update add swclock boot  
+> rc-update del hwclock boot  
 
 Create users
 
-> $useradd -m -g users -G wheel peter<br>
-> $passwd peter
+> useradd -m -g users -G wheel peter  
+> passwd peter
 
-Temporary set up wpa_supplicant
+Temporary set up wpa\_supplicant
 
-> $vi /etc/wpa_supplicant/wpa_supplicant.conf
+> vi /etc/wpa\_supplicant/wpa\_supplicant.conf
 
 Add Network
 
@@ -158,31 +186,32 @@ replace "*****" with appropriate values
 
 Run wpa_supplicant service::
 
-> $rc-service wpa_supplicant start
+> rc-service wpa\_supplicant start  
 
 No dhcp so use ifconfig and iproute
 
-> $ifconfig **** 192.168.11.99/24<br>
-> $route add default gw 192.168.11.2
+> ifconfig **** 192.168.11.99/24  
+> route add default gw 192.168.11.2  
 
 replace **** with wifi network dev
 
 Enable sshd if need to do the rest remotely
 
-> $rc-update add sshd<br>
-> $rc-service sshd start
+> rc-update add sshd  
+> rc-service sshd start
+
 
 Sync portage
 
-> $emerge-webrsync
+> emerge-webrsync
 
-> $eselect profile list<br>
-> $eselect locale list
+> eselect profile list  
+> eselect locale list
 
 emerge "base" packages I like
 
-> $emerge --ask net-misc/dhcpcd<br>
-> $emerge --ask net-misc/iwd
+> emerge net-misc/dhcpcd  
+> emerge net-misc/iwd
 
 Kill wpa_supplicant, start the iwd service::
 
@@ -201,34 +230,29 @@ Edit /etc/dhcpcd ...
 
 uncomment "hostname",
 comment out "option hostname" we want to supply hostname to the server
-uncomment "option ntp_servers"
+uncomment "option ntp\_servers"
 
 Add fallback section with static address
 
 Start the dhcpcd service
 
-> $rc-update add dhcpcd<br>
-> $rc-service dhcpcd
+> rc-update add dhcpcd  
+> rc-service dhcpcd
 
 
 emerge "base" packages I like
 
-> $emerge --ask app-misc/screen<br>
-> $emerge --ask app-portage/gentoolkit
+> $emerge app-misc/screen<br>
+> $emerge app-portage/gentoolkit
 
-> $emerge --ask app-editors/vim<br>
+> $emerge app-editors/vim<br>
 > USE=python -crypt, set in package.use subfolder
 
-> $emerge --ask dev-vcs/git<br>
-> USE=-perl<br>
+> emerge dev-vcs/git<br>
+> emerge app-admin/sudo<br>
+> emerge net-misc/chrony<br>
 
-> $emerge --ask app-admin/sudo<br>
-> USE=-sendmail
-
-> $emerge --ask net-misc/chrony<br>
->  USE=-nts -pts -nettle
-
-> $emerge --ask sysklogd
+> emerge sysklogd
 
 Set root password
 
@@ -240,15 +264,6 @@ Other packages
 > $emerge alsa-utils<br>
 > $emerge opus<br>
 > $emerge app-eselect/eselect-repository
-
-DHCP server
-
-> $emerge net-misc/kea
-
-DNS server
-
-> $emerge net-dns/unbound<br>
-> USE=dnscrypt -http2
 
 > $emerge ldns-utils<br> 
         // for drill
@@ -269,6 +284,22 @@ Change HandlePowerKey to 'ignore'
 Change HandlePowerKeyLongPress to 'poweroff'
 
 > $rc-service elogind restart
+
+## Screen resolution
+
+Xwayland can't handle scaling so...
+
+In Sway set output scale to 1 
+
+    output $primary {  
+        bg #002200 solid_color scale 1  
+    }  
+
+For GTK applications, set font in .config/gtk-3.0/settings.ini
+
+  [Settings]  
+    gtk-font-name=DejaVu Sans 20  
+
 
 Other things are
 

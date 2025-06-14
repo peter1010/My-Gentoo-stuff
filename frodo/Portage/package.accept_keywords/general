@@ -2,12 +2,23 @@
 # ~* — Package is visible if it is in testing on any architecture.
 # ** — Package is always visible (KEYWORDS are ignored completely).
 
-app-misc/khal ~*
+# project has no recent releases
+=app-laptop/mbpfan-9999 **
+
+=app-misc/khal-0.13.0 ~*
+
+=games-strategy/wesnoth-1.18.5 ~*
+
+# Only stable on ARM, needed to build for ARM
 sys-boot/raspberrypi-firmware *
-sys-kernel/raspberrypi-sources **
-dev-python/aiohttp-oauthlib ~*
-dev-python/aiostream ~*
-dev-python/click-log ~*
-dev-python/vdirsyncer ~*
-app-laptop/mbpfan **
+
+# Only stable on ARM, needed to build for ARM
+sys-kernel/raspberrypi-sources *
+
+=dev-python/aiohttp-oauthlibi-0.1.0 ~*
+=dev-python/aiostream-0.7.0 ~*
+=dev-python/click-log-0.4.0 ~*
+=dev-python/vdirsyncer-0.19.3 ~*
+
+net-analyzer/termshark **
 net-mail/isync **

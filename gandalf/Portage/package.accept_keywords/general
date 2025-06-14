@@ -1,11 +1,8 @@
-=gui-wm/hikari-2.3.3 **
-=app-text/scdoc-1.11.1 ~arm
-=sys-auth/seatd-9999 **
-=dev-libs/libucl-9999 **
-=sys-devel/bmake-20220116 **
+
+# Needed by Kea
+=dev-build/meson-1.8.2 **
+
+# Needed by Kea
 =dev-libs/log4cplus-2.0.7 ~arm
-=net-misc/kea-2.6.3 **
-net-dns/bind **
-sys-kernel/raspberrypi-sources **
-net-dns/nsd *
-mail-mta/msmtp *
+=net-dns/bind-9.20.10 **
+=net-misc/kea-2.6.4 **

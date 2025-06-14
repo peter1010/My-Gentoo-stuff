@@ -1,24 +1,25 @@
-app-admin/sysklogd ~arm64
+# ~arm64 Package is visible if it is in testing on arm64
+#  *	 Package is visible if it is stable on any architecture.
+# ~*  	 Package is visible if it is in testing on any architecture.
+# **  	 Package is always visible (KEYWORDS are ignored completely).
+
 app-admin/sshguard ~arm64
-dev-libs/date **
-dev-libs/bemenu ~arm64
-gui-libs/gtk-layer-shell ~arm64
-gui-wm/wayfire ~arm64
-dev-python/cachecontrol *
-dev-python/cerberus ~arm64
-dev-python/csscompressor **
-dev-python/pipenv **
-dev-python/poetry **
-dev-python/poetry-plugin-export **
-dev-python/pkginfo ~arm64
-dev-python/shellingham **
-dev-python/virtualenv-clone **
-games-strategy/wesnoth **
+
+# >=1.8.0 needed by kea-3.0.0
+>=dev-build/meson-1.8.0 ~arm64
+
+# Needed by kea
+=dev-libs/log4cplus-2.1.2 ~arm64
+
+dev-python/pipenv *
+dev-python/poetry ~*
+dev-python/poetry-plugin-export ~*
+dev-python/shellingham *
+dev-python/virtualenv-clone ~arm64
+
+net-misc/kea ~arm64
+
+games-strategy/wesnoth ~*
+
 sys-apps/hw-probe ~arm64
-sys-apps/edid-decode ~arm64
 sys-apps/hwinfo ~arm64
-www-servers/lighttpd ~arm64
-www-servers/uwsgi ~arm64
-x11-apps/mesa-progs ~arm64
-x11-misc/read-edid *
-x11-terms/sakura *

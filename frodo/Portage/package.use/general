@@ -1,10 +1,12 @@
+app-accessibility/at-spi2-core -X
 app-admin/sudo -sendmail offensive
+app-admin/rsyslog -gcrypt
 app-crypt/gnupg smartcard usb
 app-crypt/pinentry -gtk -X
 app-crypt/gcr -gtk
 app-editors/vim python -crypt -lua -X
 app-editors/gvim python -crypt -lua -clientserver
-app-text/poppler cairo
+app-text/poppler cairo -introspection
 app-text/texlive -X graphics extra png
 app-text/texlive-core -X
 app-text/xmlto text
@@ -17,14 +19,15 @@ dev-python/pillow tiff webp
 dev-vcs/git -perl tk -webdav
 gui-apps/waybar network
 gui-wm/sway -swaybar
+mail-client/claws-mail calendar -dbus -notification -libnotify -libcanberra
 media-gfx/imagemagick -cxx jpeg xml -X
 media-gfx/inkscape exif jpeg -X
 media-libs/gd truetype fontconfig
 media-libs/gegl cairo
 media-libs/libpulse -X -asyncns -dbus -glib
-media-libs/libsdl2 gles2
+media-libs/libsdl2 gles2 -haptic
 media-libs/libvpx postproc
-media-libs/sdl2-image jpeg png
+media-libs/sdl2-image jpeg png webp
 media-libs/sdl2-mixer vorbis
 media-libs/tiff jpeg
 media-plugins/alsa-plugins pulseaudio -mix -usb_stream
@@ -43,4 +46,7 @@ sys-libs/zlib minizip
 sys-process/psmisc -X
 www-client/chromium -X -hangouts
 www-client/firefox -X wayland dbus
+x11-libs/gdk-pixbuf jpeg
 x11-libs/libva opengl
+x11-libs/motif xft
+x11-libs/vte -crypt

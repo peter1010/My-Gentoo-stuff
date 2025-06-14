@@ -1,10 +1,16 @@
 app-admin/sudo -sendmail offensive
+app-crypt/gnupg -smartcard
 app-editors/nano -spell
 app-editors/vim python -crypt -lua -X
+dev-libs/boost -stacktrace
+dev-libs/glib -introspection
 dev-vcs/git -perl
+media-libs/freetype -adobe-cff -cleartype-hinting
+media-libs/harfbuzz -cairo -glib -graphite -introspection -truetype
 media-video/motion ffmpeg mmal
-net-dns/unbound -http2 dnscrypt
 net-misc/chrony -nts -pts
 net-misc/netifrc -dhcp
 sys-devel/gcc -fortran
 net-dns/nsd -tfo
+net-misc/kea doc shell
+
