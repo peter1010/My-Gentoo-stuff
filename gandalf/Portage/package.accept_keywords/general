@@ -2,12 +2,10 @@
 =app-text/scdoc-1.11.1 ~arm
 =sys-auth/seatd-9999 **
 =dev-libs/libucl-9999 **
-=gui-libs/wlroots-0.15.0-r1 **
 =sys-devel/bmake-20220116 **
 =dev-libs/log4cplus-2.0.7 ~arm
-=net-misc/kea-2.4.1 **
+=net-misc/kea-2.6.3 **
 net-dns/bind **
-net-dns/bind-tools **
 sys-kernel/raspberrypi-sources **
 net-dns/nsd *
 mail-mta/msmtp *
