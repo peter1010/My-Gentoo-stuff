@@ -1,5 +1,6 @@
 app-admin/sudo -sendmail offensive
 app-crypt/gnupg -smartcard
+app-crypt/pinentry -wayland
 app-editors/vim python -crypt -lua -X
 dev-vcs/git -perl
 media-video/motion ffmpeg mmal
