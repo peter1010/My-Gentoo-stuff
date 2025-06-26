@@ -128,6 +128,9 @@ Edit /mnt/rpi/boot/cmdline.txt (ls -al will find a saved version)
 
     Add audit=0 selinux=0
     change root=/dev/mmcblk0p2
+    Add net.ifnames=0
+
+Note: net.ifnames means the kernel with use eth0 for the first interface found
 
 Edit /mnt/rpi/boot/config.txt
 
