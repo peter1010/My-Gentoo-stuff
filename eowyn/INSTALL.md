@@ -84,10 +84,10 @@ Mount the boot partition in the hosts /boot mount point...
 
 > mount /dev/sdc1 /boot
 
-Triple check you have mounted the right /boot as you don't want to distroy the host's boot! 
+Triple check you have mounted the right /boot as you don't want to distroy the host's boot!
 
 > emerge --ask sys-boot/raspberrypi-firmware
-> unmout /boot
+> umount /boot
 
 ## Build the kernel
 
@@ -136,6 +136,9 @@ Edit /mnt/rpi/boot/cmdline.txt (ls -al will find a saved version)
 
     Add audit=0 selinux=0
     change root=/dev/mmcblk0p2
+    Add net.ifnames=0
+
+NoteL net.ifnames=0 means the first network interface found to be named eth0, and so on
 
 Edit /mnt/rpi/boot/config.txt
 
@@ -147,12 +150,10 @@ Edit /mnt/rpi/boot/config.txt
 
 ## Tweaks ready to boot nicely
 
-At this point one could umount the sd-card and boot the Raspberry pi. Or for convenience continue with the mounted SD-CARD. Assumming the latter.
-
+At this point one could umount the sd-card and boot the Raspberry pi. Or for convenience continue with the mounted SD-CARD.
+Assumming the latter.
 
 Adjust /mnt/rpi/etc/portage/make.conf
-
-
 
     COMMON_FLAGS="-O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"  
     CFLAGS="${COMMON_FLAGS}"  
@@ -167,7 +168,6 @@ Adjust /mnt/rpi/etc/portage/make.conf
     EMERGE_DEFAULT_OPTS="--jobs=1 --ask"  
     USE="alsa -pulseaudio -dbus -systemd"  
 
-
 > cp /etc/resolv.conf /mnt/rpi/etc/resolv.conf
 
 Set up hostname
@@ -177,6 +177,28 @@ Set up hostname
 and/or
 
 > vi /mnt/rpi/etc/conf.d/hostname
+
+> vi /mnt/rpi/etc/conf.d/net
+
+    config_eth0="192.168.11.16/24"
+
+    routes_eth0="default via 192.168.11.5"
+
+    dns_servers_eth0="192.168.11.10 192.168.11.11"
+    dns_search_eth0="home.arpa"
+
+    \# set IPv6 interface token
+    preup() {
+        ip token set ::16 dev eth0
+        return 0
+    }
+
+    \# optional: assign the token ::16 address to fe80:
+    postup() {
+        ip addr flush scope link dev eth0
+        ip addr add fe80::16/64 dev eth0
+        return 0
+    }
 
 Set up locale
 
@@ -191,7 +213,7 @@ set up keymaps
 
 clear root password
 
-> sed -i 's/^root:.*/root::::::::/' /mnt/rpi/etc/shadow 
+> sed -i 's/^root:.*/root::::::::/' /mnt/rpi/etc/shadow
 
 Edit local.gen
 
@@ -225,16 +247,6 @@ Create users
 > useradd -m -g users -G wheel peter  
 > passwd peter
 
-Fix the network interface names by creating a /etc/udev/rules.d/99\_my.rules
-
-    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
-
-Reboot and check network interface is now eth0
-
-Initinally no dhcp so use ifconfig and iproute..
-
-> ifconfig eth0 192.168.11.99/24
-> route add default gw 192.168.11.2
 
 Enable sshd if need to do the rest remotely
 
@@ -258,27 +270,6 @@ Setup console fonts.
 
 
 Get network to automatically come up using dhcp
-
-> emerge net-misc/dhcpcd
-
-Edit /etc/dhcpcd ...
-
-    uncomment "hostname"  
-    comment out "option hostname" we want to supply hostname to the server  
-    uncomment "option ntp\_servers"  
-
-    slaac token ::16  
-    \# if dhcp fails, assigne IP address so we are reachable  
-    fallback static_xxx  
-
-    profile static_xxx
-    static ip_address=192.168.11.16/24
-
-
-Start the dhcpcd service::
-
-> rc-update add dhcpcd  
-> rc-service dhcpcd
 
 
 emerge "base" packages I like::

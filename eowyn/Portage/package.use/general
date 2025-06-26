@@ -1,4 +1,5 @@
 app-admin/sudo -sendmail offensive
+app-crypt/gnupg -smartcard
 app-editors/vim python -crypt -lua -X
 dev-lang/rust -lto
 dev-vcs/git -perl
