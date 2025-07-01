@@ -2,12 +2,13 @@
 # ~* — Package is visible if it is in testing on any architecture.
 # ** — Package is always visible (KEYWORDS are ignored completely).
 
+app-laptop/mbpfan **
 app-misc/khal ~*
+games-strategy/wesnoth ~*
 sys-boot/raspberrypi-firmware *
 sys-kernel/raspberrypi-sources **
 dev-python/aiohttp-oauthlib ~*
 dev-python/aiostream ~*
 dev-python/click-log ~*
 dev-python/vdirsyncer ~*
-app-laptop/mbpfan **
 net-mail/isync **
