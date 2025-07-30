@@ -1,4 +1,8 @@
-dev-libs/log4cplus ~arm64
+# Needed for Kea
+=dev-build/meson-1.8.2 **
+
+# Needed for kea
+=dev-libs/log4cplus-2.0.7 ~arm64
 media-video/motion **
 
 net-misc/kea ~arm64
