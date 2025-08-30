@@ -35,6 +35,7 @@ media-sound/pulseaudio-daemon -X -alsa -alsa-plugin -udev -asyncns -dbus -webrtc
 media-video/motion ffmpeg mmal
 net-dns/avahi python -introspection
 net-dns/unbound -http2 dnscrypt
+net-libs/libdom xml
 net-libs/nodejs inspector
 net-misc/chrony -nts -pts
 net-print/cups -X
