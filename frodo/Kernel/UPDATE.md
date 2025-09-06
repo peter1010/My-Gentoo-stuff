@@ -7,7 +7,7 @@
 ## Either get old config
 
 > $modprobe configs  
-> $zcat /proc/config.gz .config  
+> $zcat /proc/config.gz > .config  
 
 ## Or
 
