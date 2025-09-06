@@ -11,8 +11,8 @@
 
 ## Or
 
-> $cp xxx/MacBookPro_linux_defconfig to /usr/src/linux/arch/x86_6/configs/
-> $make MacbooPro_defconfig
+> $cp xxx/MacBookPro_linux_defconfig to /usr/src/linux/arch/x86_6/configs/  
+> $make MacbooPro_defconfig  
 
 # Refresh the config
 
