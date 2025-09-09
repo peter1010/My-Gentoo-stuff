@@ -30,7 +30,7 @@ check /lib/modules/ contains the modules
 
 # Mount the boot partition and copy across the kernel
 
-> $cp arch/arm64/boot/bzImage /boot/vmlinuz_xxxx.bz
+> $cp arch/arm64/boot/Image.gz /boot/linuz-xxxx-gentoo.gz
 
 # Save config
 
