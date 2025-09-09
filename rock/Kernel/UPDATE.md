@@ -11,8 +11,8 @@
 
 ## Or
 
-> Copy my_rockpro64_defconfig to /usr/src/linux/arch/arm64/configs/
-> make my_rockpro64_defconfig
+> Copy my\_rockpro64\_defconfig to /usr/src/linux/arch/arm64/configs/
+> make my\_rockpro64\_defconfig
 
 # Refresh the config
 
@@ -24,7 +24,7 @@
 
 # Install modules
 
-> $make modules_install
+> $make modules\_install
 
 check /lib/modules/ contains the modules
 
@@ -35,7 +35,7 @@ check /lib/modules/ contains the modules
 # Save config
 
 > $make savedefconfig  
-> $cp defconfig to .... xx_defconfig  
+> $cp defconfig to .... my\_rockpro64\_defconfig  
 
 # Create emergency initramfs..
 
