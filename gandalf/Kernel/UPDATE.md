@@ -11,8 +11,8 @@
 
 ## Or
 
-> $cp xxx/MacBookPro\_linux\_defconfig to /usr/src/linux/arch/x86\_64/configs/  
-> $make MacbooPro\_defconfig  
+> $my\rpi3\_defconfig arch/arm/configs/my\_defconfig  
+> $make my\_defconfig
 
 # Refresh the config
 
@@ -30,12 +30,14 @@ check /lib/modules/ contains the modules
 
 # Mount the boot partition and copy across the kernel
 
-> $cp arch/x86\_64/boot/bzImage /boot/vmlinuz\_xxxx.bz
+> $cp arch/arm/boot/Image /boot/kernel.img  
+> $cp arch/arm/boot/dts/broadcom/*rpi*.dtb /boot/  
+> $mkdir /boot/overlays  
+> $cp arch/arm/boot/dts/overlays/*.dtbo /boot/overlays/  
+> $cp arch/arm/boot/dts/overlays/README.txt /boot/overlays/  
 
 # Save config
 
 > $make savedefconfig  
-> $cp defconfig to .... xx\_defconfig  
-
-# Create emergency initramfs..
+> $cp defconfig to .... my\_rpi3\_defconfig  
 

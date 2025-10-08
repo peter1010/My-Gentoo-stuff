@@ -1,18 +1,18 @@
-# Get old config
+# Set kernel source
 
-> eselect kernel list  
-> eselect kernel set xx  
-> cd /usr/src/linux  
+> $eselect kernel list  
+> $eselect kernel set xx  
+> $cd /usr/src/linux  
 
 ## Either get old config
 
-> modprobe configs  
-> zcat /proc/config.gz .config  
+> $modprobe configs  
+> $zcat /proc/config.gz > .config  
 
 ## Or
 
-> cp xx_defconfig arch/arm/configs/my_defconfig  
-> make my_defconfig
+> $cp my\_rpi3\_defconfig arch/arm/configs/my\_defconfig  
+> $make my\_defconfig
 
 # Refresh the config
 
@@ -24,7 +24,7 @@
 
 # Install modules
 
-> $make modules_install
+> $make modules\_install
 
 check /lib/modules/ contains the modules
 
@@ -39,6 +39,5 @@ check /lib/modules/ contains the modules
 # Save config
 
 > $make savedefconfig  
-> $cp defconfig to .... xx_defconfig  
-
+> $cp defconfig to .... my\_rpi3\_defconfig  
 

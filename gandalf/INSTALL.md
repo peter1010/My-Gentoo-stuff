@@ -87,7 +87,7 @@ Mount the boot partition in the hosts /boot mount point...
 Triple check you have mounted the right /boot as you don't want to distroy the host's boot! 
 
 > emerge --ask sys-boot/raspberrypi-firmware
-> unmout /boot
+> umount /boot
 
 ## Build the kernel
 
@@ -102,7 +102,7 @@ If not already done, install cross compiler;
 > eselect repository create crossdev  
 > crossdev -S -t armv7a-unknown-linux-gnueabihf
 
-Get the linux sources files:
+Get the linux source files:
 
 > emerge sys-kernel/raspberrypi-sources
 
@@ -138,7 +138,7 @@ Edit /mnt/rpi/boot/cmdline.txt (ls -al will find a saved version)
     change root=/dev/mmcblk0p2
     Add net.ifnames=0
 
-Note: net.ifnames=0 means the first network interface found will be called eth0
+Note: net.ifnames=0 means the first network interface found will be called eth0, and so on
 
 Edit /mnt/rpi/boot/config.txt
 
@@ -150,11 +150,10 @@ Edit /mnt/rpi/boot/config.txt
 
 ## Tweaks ready to boot nicely
 
-At this point one could umount the sd-card and boot the Raspberry pi. Or for convenience continue with the mounted SD-CARD. Assumming the latter.
-
+At this point one could umount the sd-card and boot the Raspberry pi. Or for convenience continue with the mounted SD-CARD.
+Assumming the latter.
 
 Adjust /mnt/rpi/etc/portage/make.conf
-
 
     COMMON_FLAGS="-O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"  
     CFLAGS="${COMMON_FLAGS}"  
@@ -167,7 +166,7 @@ Adjust /mnt/rpi/etc/portage/make.conf
     MAKEOPTS="-j1"  
     LINGUAS="en_GB"  
     L10N="en-GB"  
-
+    EMERGE_DEFAULT_OPTS="--jobs=1 --ask"  
 
 > cp /etc/resolv.conf /mnt/rpi/etc/resolv.conf
 
@@ -185,7 +184,6 @@ Set up domainname & network
 > ln -s net.lo net.eth0
 
 > vi /mnt/rpi/etc/conf.d/net
-
 
     config_eth0="192.168.11.10/24"
 
@@ -218,7 +216,6 @@ set up keymaps
 
     keymap="uk"
 
-
 clear root password
 
 > sed -i 's/^root:.*/root::::::::/' /mnt/rpi/etc/shadow 
@@ -246,7 +243,7 @@ Fix keymaps, update local
 
 Set time
 
-> date MMDDhhmmYYYY   
+> date MMDDhhmmYYYY  
 > rc-update add swclock boot  
 > rc-update del hwclock boot
 
@@ -254,10 +251,6 @@ Create users
 
 > useradd -m -g users -G wheel peter  
 > passwd peter
-
-Fix the network interface names by creating a /etc/udev/rules.d/99\_my.rules
-
-    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
 Add the startup for the network
 

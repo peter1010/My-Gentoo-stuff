@@ -138,7 +138,7 @@ Edit /mnt/rpi/boot/cmdline.txt (ls -al will find a saved version)
     change root=/dev/mmcblk0p2
     Add net.ifnames=0
 
-NoteL net.ifnames=0 means the first network interface found to be named eth0, and so on
+Note: net.ifnames=0 means the first network interface found will be called eth0, and so on
 
 Edit /mnt/rpi/boot/config.txt
 
@@ -177,6 +177,11 @@ Set up hostname
 and/or
 
 > vi /mnt/rpi/etc/conf.d/hostname
+
+Set up domainname & network
+
+> cd /mnt/rpi/etc/init.d  
+> ln -s net.lo net.eth0
 
 > vi /mnt/rpi/etc/conf.d/net
 
