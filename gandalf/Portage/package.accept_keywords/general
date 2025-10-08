@@ -1,8 +1,12 @@
+# ~arm64 Package is visible if it is in testing on arm64
+#  *	 Package is visible if it is stable on any architecture.
+# ~*  	 Package is visible if it is in testing on any architecture.
+# **  	 Package is always visible (KEYWORDS are ignored completely).
 
 # Needed by Kea
-=dev-build/meson-1.8.2 **
+dev-build/meson ~arm
 
 # Needed by Kea
-=dev-libs/log4cplus-2.0.7 ~arm
-=net-dns/bind-9.20.10 **
-=net-misc/kea-2.6.4 **
+
+net-dns/bind ~arm
+net-misc/kea ~arm

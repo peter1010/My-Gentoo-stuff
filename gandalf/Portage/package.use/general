@@ -7,7 +7,7 @@ media-video/motion ffmpeg mmal
 net-dns/avahi python -introspection
 net-dns/bind doh
 net-dns/unbound -http2 dnscrypt -tfo
-net-misc/chrony -nts -pts
+net-misc/chrony -nts -pts -phc
 sys-devel/gcc -fortran
 www-servers/lighttpd -lua
-net-misc/kea test
+net-misc/kea test doc
