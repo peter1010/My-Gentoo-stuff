@@ -8,8 +8,8 @@ app-admin/sshguard ~arm64
 # >=1.8.0 needed by kea-3.0.0
 >=dev-build/meson-1.8.0 ~arm64
 
-# Needed by kea
-=dev-libs/log4cplus-2.1.2 ~arm64
+# for looking at kea issue
+# =dev-libs/boost-1.89.0 **
 
 dev-python/pipenv *
 dev-python/poetry ~*
@@ -19,7 +19,7 @@ dev-python/virtualenv-clone ~arm64
 
 net-misc/kea ~arm64
 
-games-strategy/wesnoth ~*
+=games-strategy/wesnoth-1.8.15 ~*
 
 sys-apps/hw-probe ~arm64
 sys-apps/hwinfo ~arm64
