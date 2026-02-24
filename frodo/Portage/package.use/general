@@ -2,8 +2,8 @@ app-accessibility/at-spi2-core -X
 app-admin/sudo -sendmail offensive
 app-admin/rsyslog -gcrypt
 app-crypt/gnupg smartcard usb
-app-crypt/pinentry -gtk -X
-app-crypt/gcr -gtk
+app-crypt/pinentry
+app-crypt/gcr -X gtk
 app-editors/vim python -crypt -lua -X
 app-editors/gvim python -crypt -lua -clientserver
 app-text/poppler cairo -introspection
@@ -15,15 +15,27 @@ dev-lang/tk truetype
 dev-lang/rust rustfmt
 dev-libs/bemenu -X wayland
 dev-libs/boost context icu
+dev-libs/efl -elogind -gstreamer -sound -pdf -system-lz4 
+dev-libs/libdbusmenu gtk3 -introspection
+dev-libs/libunibreak -man
+dev-libs/openssl fips
 dev-python/pillow tiff webp
+dev-python/pyopengl tk
+dev-qt/qtbase opengl -X -cups -network -dbus 
+dev-qt/qttools opengl -assistant -linguist -qdbus -widgets
 dev-vcs/git -perl tk -webdav
-gui-apps/waybar network
+gui-apps/waybar network tray
+gui-libs/gtk -cups -X
 gui-wm/sway -swaybar
 mail-client/claws-mail calendar -dbus -notification -libnotify -libcanberra
-media-gfx/imagemagick -cxx jpeg xml -X
-media-gfx/inkscape exif jpeg -X
+media-libs/freetype harfbuzz brotli 
 media-libs/gd truetype fontconfig
 media-libs/gegl cairo
+media-libs/opensubdiv tbb 
+media-gfx/blender -X -nanovdb -bullet -ffmpeg -fluid -manifold -potrace -pugixml -rubberband -sndfile -collada -gnome -jack -ndof -openal -openvdb -webp wayland
+media-gfx/imagemagick -cxx jpeg xml -X
+media-gfx/freecad -X
+media-gfx/inkscape exif jpeg -X
 media-libs/libpulse -X -asyncns -dbus -glib
 media-libs/libsdl2 gles2 -haptic
 media-libs/libvpx postproc
@@ -38,7 +50,9 @@ net-dns/unbound -http2 dnscrypt
 net-libs/libdom xml
 net-libs/nodejs inspector
 net-misc/chrony -nts -pts
+net-misc/openssh security-key 
 net-print/cups -X
+sci-libs/fftw threads
 sys-apps/busybox -pam
 sys-apps/smartmontools -daemon -update-drivedb
 sys-auth/seatd server -elogind
