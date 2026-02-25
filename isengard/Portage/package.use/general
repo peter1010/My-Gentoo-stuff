@@ -12,5 +12,5 @@ net-misc/chrony -nts -pts
 net-misc/netifrc -dhcp
 sys-devel/gcc -fortran
 net-dns/nsd -tfo
-net-misc/kea doc shell
+net-misc/kea shell
 

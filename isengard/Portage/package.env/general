@@ -1,1 +1,2 @@
-net-misc/kea ccache.conf test.conf
+#net-misc/kea ccache.conf test.conf
+net-misc/kea ccache.conf
