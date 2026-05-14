@@ -243,8 +243,8 @@ Fix keymaps, update local
 Set time
 
 > date MMDDhhmmYYYY  
-> rc-update add swclock boot  
-> rc-update del hwclock boot
+
+See adjtimex for setting up RTC
 
 Create users
 
@@ -272,8 +272,6 @@ Setup portage use flags
 
 Setup console fonts.
 
-
-Get network to automatically come up using dhcp
 
 
 emerge "base" packages I like::

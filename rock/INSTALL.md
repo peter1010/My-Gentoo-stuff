@@ -194,8 +194,8 @@ Fix keymaps, update local
 Set time
 
 > date MMDDhhmmYYYY  
-> rc-update add swclock boot  
-> rc-update del hwclock boot
+
+See adjtimex for setting up RTC
 
 Create users
 
@@ -238,32 +238,6 @@ Setup portage use flags
 
 
 
-Get network to automatically come up using dhcp
-=======
-emerge "base" packages I like
-
-> emerge net-misc/dhcpcd
-
-Edit /etc/dhcpcd ...
-
-    uncomment "hostname"  
-    comment out "option hostname" we want to supply hostname to the server  
-    uncomment "option ntp\_servers"  
-
-    slaac token ::16  
-    \# if dhcp fails, assigne IP address so we are reachable  
-    fallback static_xxx  
-
-    profile static_xxx
-    static ip_address=192.168.11.16/24
-
-
-Start the dhcpcd service
-
-> rc-update add dhcpcd  
-> rc-service dhcpcd
-
-
 emerge "base" packages I like::
 
 > emerge app-misc/screen
@@ -276,11 +250,9 @@ See adjtimex & NTP for time
 
 > emerge sysklogd
 
-
 Set root password::
 
   $passwd
-
 
 Other packages::
 

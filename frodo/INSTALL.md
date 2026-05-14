@@ -158,8 +158,8 @@ Fix keymaps, update local
 Set time
 
 > date MMDDhhmmYYYY  
-> rc-update add swclock boot  
-> rc-update del hwclock boot  
+
+See adjtimex for setting up RTC
 
 Create users
 
@@ -210,7 +210,6 @@ Sync portage
 
 emerge "base" packages I like
 
-> emerge net-misc/dhcpcd  
 > emerge net-misc/iwd
 
 Kill wpa_supplicant, start the iwd service::
@@ -226,18 +225,7 @@ Configure iwd
     station *** scan
     station *** connect ****
 
-Edit /etc/dhcpcd ...
-
-uncomment "hostname",
-comment out "option hostname" we want to supply hostname to the server
-uncomment "option ntp\_servers"
-
-Add fallback section with static address
-
-Start the dhcpcd service
-
-> rc-update add dhcpcd  
-> rc-service dhcpcd
+Install & configure dhcpcd, see dhcpcd.rst
 
 
 emerge "base" packages I like
