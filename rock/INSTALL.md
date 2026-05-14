@@ -271,7 +271,9 @@ emerge "base" packages I like::
 > emerge app-editors/vim
 > emerge dev-vcs/git
 > emerge app-admin/sudo
-> emerge net-misc/chrony
+
+See adjtimex & NTP for time
+
 > emerge sysklogd
 
 

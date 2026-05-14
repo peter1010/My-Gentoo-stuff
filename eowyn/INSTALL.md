@@ -144,7 +144,6 @@ Edit /mnt/rpi/boot/config.txt
 
     dtparam=audio=off
     dtoverlay=vc4-kms-v3d
-    dtoverlay=i2c-rtc,ds3231
     dtoverlay=disable-bt
     dtoverlay=disable-wifi
 
@@ -284,7 +283,9 @@ emerge "base" packages I like::
 > emerge app-editors/vim
 > emerge dev-vcs/git
 > emerge app-admin/sudo
-> emerge net-misc/chrony
+
+See adjtimex & NTP for time
+
 > emerge sysklogd
 > emerge dcron
 

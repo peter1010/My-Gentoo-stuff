@@ -250,7 +250,8 @@ emerge "base" packages I like
 
 > emerge dev-vcs/git<br>
 > emerge app-admin/sudo<br>
-> emerge net-misc/chrony<br>
+
+See adjtimex & NTP for time
 
 > emerge sysklogd
 
