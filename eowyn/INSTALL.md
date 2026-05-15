@@ -184,25 +184,7 @@ Set up domainname & network
 
 > vi /mnt/rpi/etc/conf.d/net
 
-    config_eth0="192.168.11.16/24"
-
-    routes_eth0="default via 192.168.11.5"
-
-    dns_servers_eth0="192.168.11.10 192.168.11.11"
-    dns_search_eth0="home.arpa"
-
-    \# set IPv6 interface token
-    preup() {
-        ip token set ::16 dev eth0
-        return 0
-    }
-
-    \# optional: assign the token ::16 address to fe80:
-    postup() {
-        ip addr flush scope link dev eth0
-        ip addr add fe80::16/64 dev eth0
-        return 0
-    }
+See static_ip.rst
 
 Set up locale
 
