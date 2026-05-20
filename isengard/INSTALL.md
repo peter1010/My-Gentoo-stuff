@@ -8,26 +8,7 @@ Partition (see partition.rst)
 
 ## Install Stage 3 root partition
 
-Download stage3-arm64-openrx-xxx.tar.xz from gentoo.
-
-Mount sd card root partition and untar stage3.
-
-> mkdir /mnt/rpi  
-> mount /dev/sdc2 /mnt/rpi  
-> tar -xpf stage3-xxx -C /mnt/rpi  
-
-Fixup /mnt/rpi/etc/fstab
-
-    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2  
-    /dev/mmcblk0p2          /               ext4            noatime         0 1
-
-Get portage-latest.tar.bz2
-
-> wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2  
-> tar -xpf portage-latest.tar.bz2 -C /mnt/rpi/usr
-
-> mkdir /mnt/rpi/etc/portage/repos.conf  
-> cp /mnt/rpi/usr/share/portage/config/repos.conf /mnt/rpi/etc/portage/repos.conf/gentoo.conf
+See install\_stage3.rst
 
 ## Put RPI firmware into the boot partition
 

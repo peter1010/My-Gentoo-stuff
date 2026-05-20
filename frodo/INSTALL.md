@@ -8,27 +8,7 @@ Partition (see partition.rst)
 
 ## Install Stage 3 root partition
 
-Download stage3 stage3-amd64-openrc-xxx.tar.xz from Gentoo.
-
-Mount root partition and untar stage3..
-
-> mkdir /mnt/root  
-> mount /dev/sda3 /mnt/root  
-> tar -xpf stage3-xxx -C /mnt/root  
-
-Fixup /mnt/root/etc/fstab
-
-    /dev/sda1          /boot           auto            noauto,noatime  1 2
-    /dev/sda2          none            swap            sw              0 0
-    /dev/sda3          /               ext4            noatime         0 1
-
-Get portage-latest.tar.bz2
-
-> wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2  
-> tar -xpf portage-latest.tar.bz2 -C /mnt/root/usr  
-
-> mkdir /mnt/root/etc/portage/repos.conf  
-> cp /mnt/root/usr/share/portage/config/repos.conf /mnt/root/etc/portage/repos.conf/gentoo.conf<br>
+See install\_stage3.rst
 
 ## Build the kernel
 

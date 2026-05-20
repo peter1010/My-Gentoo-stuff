@@ -8,26 +8,7 @@ Partition (see partition.rst)
 
 ## Install Stage 3 root partition
 
-Download stage3 for the Arm64 "stage3-arm64-openrc-xxx.tar.bz2 from gentoo website.
-
-Mount sd card root partition and untar stage3.
-
-> mkdir /mnt/rock  
-> mount /dev/sdc2 /mnt/rock  
-> tar -xpf stage3-xxx -C /mnt/rock  
-
-Fixup /mnt/rock/etc/fstab
-
-    /dev/mmcblk0p1          /boot           auto            noauto,noatime  1 2   
-    /dev/mmcblk0p2          /               ext4            noatime         0 1  
-
-Get portage-latest.tar.bz2
-
-> wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2  
-> tar -xpf portage-latest.tar.bz2 -C /mnt/rock/usr
-
-> mkdir /mnt/rock/etc/portage/repos.conf  
-> cp /mnt/rock/usr/share/portage/config/repos.conf /mnt/rock/etc/portage/repos.conf/gentoo.conf
+See install\_stage3.rst
 
 ## Build the kernel
 
