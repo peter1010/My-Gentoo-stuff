@@ -4,48 +4,7 @@ Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine.
 
 ## Format Boot/Storage Medium
 
-For RockPo64, we use GPT and a EFI partition, run fdisk...
-
-> sudo fdisk /dev/sdc
-
-Delete all partitions with the 'd' command.
-
-Create the GPT partition table 'g'.
-
-We need to make room for the u-boot images so start first parition at LBA 32768!
-
-We use vfat for boot partition and want to end so next partition starts on a 4M boundary so:
-
-> n -> p -> 1 -> 32768 -> 409599
-
-Then the root partition.
-
-> n -> p -> 2 -> \<ret> -> \<ret>
-
-Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole integer, note the integer part of the answer and
-multiply back to the sector count, delete partition and recreate with new last sector.
-
-Set partition 1 as boot:
-
-> a -> 1
-
-Set partition types like so:
-
-> t -> 1 -> 1  
-> t -> 2 -> 20
-
-Example:
-
-| Device    | Start    | End      | Sectors  | Size  | Type          |
-|-----------|----------|----------|----------|-------|---------------|
-| /dev/sdc1 |    32768 |   409599 |   407552 |  199M | EFI System    |
-| /dev/sdc2 |   409600 | 62332927 | 61923328 | 29.5G | Linux         |
-
-
-Create filesystems for each like so:
-
-> mkfs.vfat -n BOOT /dev/sdc1  
-> mkfs.ext4 -L ROOT /dev/sdc2  
+Partition (see partition.rst)
 
 ## Install Stage 3 root partition
 

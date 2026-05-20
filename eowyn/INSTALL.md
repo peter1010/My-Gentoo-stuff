@@ -2,58 +2,7 @@
 
 Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine.
 
-## Format Boot/Storage Medium
-
-For Raspberry PI, we use MBR boot sector (to be backwards compatible).
-
-> sudo fdisk /dev/sdc
-
-Delete all partitions with the 'd' command.
-
-As we use vfat for boot partition and want to end on a 4M boundary so.
-
-> n -> p -> 1 -> \<ret> -> +199M
-
-We need a swap parition  2x RAM  so subract 1 or 2G from root partition
-
-> n -> p -> 2 -> \<ret> -> -1G
-
-Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole integer, note the integer part of the answer and
-multiply back to the sector count, delete partition and recreate with new last sector.
-
-Finally
-
-> n -> p -> 3 -> \<ret> -> \<ret>
-
-Set partition 1 as boot:
-
-> a -> 1
-
-Set partition types like so:
-
-> t -> 1 -> c  
-> t -> 2 -> 83  
-> t -> 3 -> 82  
-
-Example:
-
-| Device    | Start    | End      | Sectors  | Size  | Type          |
-|-----------|----------|----------|----------|-------|---------------|
-| /dev/sdc1 |     2048 |   409599 |   407552 |  199M |  c W95 FAT32  |
-| /dev/sdc2 |   409600 | 60645375 | 60235776 | 28.7G | 83 Linux      |
-| /dev/sdc3 | 60645376 | 62748671 |  2103296 |    1G | 82 Linux swap |
-
-
-Check the boundaries
-
-409600 / (2 * 1024 * 4) = 50
-60645376 / (2 * 1024 * 4) = 7403
-
-Create filesystems for each like so:
-
-> mkfs.vfat -n BOOT /dev/sdc1  
-> mkfs.ext4 -L ROOT /dev/sdc2  
-> mkswap  -L SWAP /dev/sdc3
+Partition (see partition.rst)
 
 ## Install Stage 3 root partition
 

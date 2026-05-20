@@ -4,37 +4,7 @@ Format the HD like so..
 
 ## Format Boot/Storage Medium
 
-For MacBook we use  gpt
-
-> sudo fdisk /dev/sda
-
-Delete all partitions with the 'd' command.
-
-
-
-We use vfat for boot partition
-
-
-
-Set partition types like so:
-
-> t -> 1 -> 1  
-> t -> 2 -> 20
-
-Example:
-
-| Device    | Start    | End       | Sectors   |   Size | Type             |
-|-----------|----------|-----------|-----------|--------| ---------------- |
-| /dev/sda1 |     2048 |    526335 |    524288 |   256M | EFI System       |
-| /dev/sda2 |   526336 |  34080767 |  33554432 |    16G | Linux swap       |
-| /dev/sda3 | 34080768 | 977105026 | 943024259 | 449.7G | Linux filesystem |
-
-
-Create filesystems for each like so:
-
-> mkfs.vfat -n BOOT /dev/sda1  
-> mkfs.ext4 -L ROOT /dev/sda2  
-> mkswap -L SWAP /dev/sda3  
+Partition (see partition.rst)
 
 ## Install Stage 3 root partition
 

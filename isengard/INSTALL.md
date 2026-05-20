@@ -4,47 +4,7 @@ Get suitable SD-card.. assume it is mounted at /dev/sdc on build machine.
 
 ## Format Boot/Storage Medium
 
-For Raspberry PI, we use MBR boot sector (to be backwards compatible).
-
-> sudo fdisk /dev/sdc
-
-Delete all partitions with the 'd' command.
-
-As we use vfat for boot partition and want to end on a 4M boundary so.
-
-> n -> p -> 1 -> \<ret> -> +199M
-
-Then the root partition.
-
-> n -> p -> 2 -> \<ret> -> \<ret>
-
-Take the End sector + 1. Divide by (2 x 1024 x 4), if this is not a whole integer, note the integer part of the answer and 
-multiply back to the sector count, delete partition and recreate with new last sector.
-
-Set partition 1 as boot:
-
-> a -> 1
-
-Set partition types like so:
-
-> t -> 1 -> c  
-> t -> 2 -> 83  
-
-Example:
-
-| Device    | Start    | End      | Sectors  | Size  | Type          |
-|-----------|----------|----------|----------|-------|---------------|
-| /dev/sdc1 |     2048 |   409599 |   407552 |  199M |  c W95 FAT32  |
-| /dev/sdc2 |   409600 | 60645375 | 61924352 | 29.5G | 83 Linux      |
-
-Check the boundaries
-
-409600 / (2 * 1024 * 4) = 50
-
-Create filesystems for each like so:
-
-> mkfs.vfat -n BOOT /dev/sdc1  
-> mkfs.ext4 -L ROOT /dev/sdc2
+Partition (see partition.rst)
 
 ## Install Stage 3 root partition
 
