@@ -9,6 +9,8 @@
 
 =games-strategy/wesnoth-1.18.5 ~*
 
+net-analyzer/ookla-speedtest **
+
 # Only stable on ARM, needed to build for ARM
 sys-boot/raspberrypi-firmware *
 
@@ -22,3 +24,4 @@ sys-kernel/raspberrypi-sources *
 
 net-analyzer/termshark **
 net-mail/isync **
+net-misc/rclone **

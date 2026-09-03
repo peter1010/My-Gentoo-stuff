@@ -49,14 +49,14 @@ net-dns/avahi python -introspection
 net-dns/unbound -http2 dnscrypt
 net-libs/libdom xml
 net-libs/nodejs inspector
-net-misc/chrony -nts -pts
+net-misc/chrony -nts -pps -phc -nettle -sechash
 net-misc/openssh security-key 
 net-print/cups -X
 sci-libs/fftw threads
 sys-apps/busybox -pam
 sys-apps/smartmontools -daemon -update-drivedb
 sys-auth/seatd server -elogind
-sys-boot/grub truetype
+sys-boot/grub truetype -themes
 sys-libs/zlib minizip
 sys-process/psmisc -X
 www-client/chromium -X -hangouts
